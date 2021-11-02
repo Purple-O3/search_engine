@@ -22,7 +22,8 @@ type Manager struct {
 func NewManager(dbPath string, dbHost string, dbPort string, dbPassword string, dbIndex int, dbTimeout int) *Manager {
 	mg := new(Manager)
 	var err error
-	mg.db, err = store.StoreFactory("pika", dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout)
+	//mg.db, err = store.StoreFactory("pika", dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout)
+	mg.db, err = store.StoreFactory("rocksdb", dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout)
 	if err != nil {
 		panic(err)
 	}
@@ -62,7 +63,7 @@ func (mg *Manager) getDbStr(k string) (string, error) {
 
 func (mg *Manager) AddDoc(doc objs.Doc, docid uint64, ps objs.Postings) {
 	for _, posting := range ps {
-		mg.invertedBuffer.Set(posting.FieldTerm, posting)
+		mg.invertedBuffer.Set(posting.FieldName+"_"+posting.Term, posting)
 	}
 	docidString := strconv.FormatUint(docid, 10)
 	docKey := "doc" + docidString
@@ -70,13 +71,13 @@ func (mg *Manager) AddDoc(doc objs.Doc, docid uint64, ps objs.Postings) {
 	mg.positiveBuffer.Set(docKey, tools.Bytes2Str(docByte))
 }
 
-func (mg *Manager) Retrieve(ctx context.Context, field string, fieldData string) (objs.RecallPostingList, error) {
+func (mg *Manager) Retrieve(ctx context.Context, fieldName string, term string) (objs.RecallPostingList, error) {
 	defer func(cost func() time.Duration) {
 		log.Warnf("trackid:%d, cost: %.3f ms", ctx.Value("trackid").(uint64), float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
 
 	pl := make(objs.PostingList, 0)
-	fieldKey := field + "_" + fieldData
+	fieldKey := fieldName + "_" + term
 	if plBuffer, ok := mg.invertedBuffer.Get(fieldKey); ok {
 		pl = append(pl, plBuffer...)
 	}
@@ -104,7 +105,9 @@ func (mg *Manager) Retrieve(ctx context.Context, field string, fieldData string)
 
 		postingRec := objs.RecallPosting{}
 		postingRec.Posting = posting
-		json.Unmarshal(tools.Str2Bytes(docString), postingRec)
+		if err := json.Unmarshal(tools.Str2Bytes(docString), &postingRec.Doc); err != nil {
+			return nil, err
+		}
 		recallPl = append(recallPl, postingRec)
 	}
 

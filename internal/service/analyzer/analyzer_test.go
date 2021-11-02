@@ -1,10 +1,12 @@
 package analyzer
 
 import (
+	"search_engine/internal/service/objs"
 	"testing"
+	"time"
 )
 
-/*func Test1(t *testing.T) {
+/*func TestOffset(t *testing.T) {
 	t.Log("test1")
 	stopWordPath := "/Users/wengguan/search_code/search/search_engine/configs/stop_word.txt"
 	analyzer := AnalyzerFactory(stopWordPath)
@@ -29,32 +31,32 @@ import (
 	}
 }*/
 
-func Test2(t *testing.T) {
+func TestAnalysis(t *testing.T) {
 	t.Log("test2")
 	stopWordPath := "/Users/wengguan/search_code/search/search_engine/configs/stop_word.txt"
 	analyzer := AnalyzerFactory(stopWordPath)
 	var docid uint64 = 0
-	body := "浪漫巴黎土耳其"
-	ps := analyzer.Analysis(docid, body)
+	doc := objs.Doc{Ident: "88.199.1/aaa.def", Data: objs.Data{Modified: "北京市丰台区", Saled: "北京市海淀区", CreatedAt: time.Now()}}
+	ps := analyzer.Analysis(docid, doc)
 	t.Log(ps)
 
 	docid++
-	body = "明朝那些事儿"
-	ps = analyzer.Analysis(docid, body)
+	doc = objs.Doc{Ident: "88.199.1/bbb.def", Data: objs.Data{Modified: "上海市黄浦区", Saled: "上海市浦东新区", CreatedAt: time.Now()}}
+	ps = analyzer.Analysis(docid, doc)
 	t.Log(ps)
 
 	docid++
-	body = "银河英雄传说"
-	ps = analyzer.Analysis(docid, body)
+	doc = objs.Doc{Ident: "88.199.1/ccc.def", Data: objs.Data{Modified: "天津市河东区", Saled: "天津市河西区", CreatedAt: time.Now()}}
+	ps = analyzer.Analysis(docid, doc)
 	t.Log(ps)
 
 	docid++
-	body = "中国万里长城"
-	ps = analyzer.Analysis(docid, body)
+	doc = objs.Doc{Ident: "88.199.1/ddd.def", Data: objs.Data{Modified: "江西省南昌市", Saled: "江西省吉安市", CreatedAt: time.Now()}}
+	ps = analyzer.Analysis(docid, doc)
 	t.Log(ps)
 
 	docid++
-	body = "埃及金字塔"
-	ps = analyzer.Analysis(docid, body)
+	doc = objs.Doc{Ident: "88.199.1/eee.def", Data: objs.Data{Modified: "江西省南昌市", Saled: "江西省井冈山市", CreatedAt: time.Now()}}
+	ps = analyzer.Analysis(docid, doc)
 	t.Log(ps)
 }

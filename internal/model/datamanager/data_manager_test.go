@@ -27,62 +27,56 @@ func TestAll(t *testing.T) {
 
 	var docid uint64 = 0
 	ps := make(objs.Postings, 0)
-	posting := objs.Posting{Term: "浪漫", Docid: docid, TermFreq: 5, Offset: []int{1640, 1034, 1223, 1491, 1678}}
+	posting := objs.Posting{FieldName: "Modified", Term: "丰台区", Docid: docid}
 	ps = append(ps, posting)
-	posting = objs.Posting{Term: "巴黎", Docid: docid, TermFreq: 2, Offset: []int{5048, 6813}}
+	posting = objs.Posting{FieldName: "Saled", Term: "海淀区", Docid: docid}
 	ps = append(ps, posting)
-	posting = objs.Posting{Term: "土耳其", Docid: docid, TermFreq: 1, Offset: []int{4247}}
-	ps = append(ps, posting)
-	doc := objs.Doc{Body: "浪漫巴黎土耳其", Title: "五零班", Price: 5.00}
+	doc := objs.Doc{Ident: "88.199.1/aaa.def", Data: objs.Data{Modified: "北京市丰台区", Saled: "北京市海淀区"}}
 	mg.AddDoc(doc, docid, ps)
 
 	docid += 1
 	ps = make(objs.Postings, 0)
-	posting = objs.Posting{Term: "明朝", Docid: docid, TermFreq: 2, Offset: []int{1640, 1447}}
+	posting = objs.Posting{FieldName: "Modified", Term: "黄浦区", Docid: docid}
 	ps = append(ps, posting)
-	posting = objs.Posting{Term: "那些", Docid: docid, TermFreq: 3, Offset: []int{5048, 6813, 1644}}
+	posting = objs.Posting{FieldName: "Saled", Term: "浦东新区", Docid: docid}
 	ps = append(ps, posting)
-	posting = objs.Posting{Term: "事儿", Docid: docid, TermFreq: 4, Offset: []int{3692, 4312, 5115, 5116}}
-	ps = append(ps, posting)
-	doc = objs.Doc{Body: "明朝那些事儿", Title: "五一班", Price: 5.10}
+	doc = objs.Doc{Ident: "88.199.1/bbb.def", Data: objs.Data{Modified: "上海市黄浦区", Saled: "上海市浦东新区"}}
 	mg.AddDoc(doc, docid, ps)
 
 	docid += 1
 	ps = make(objs.Postings, 0)
-	posting = objs.Posting{Term: "银河", Docid: docid, TermFreq: 3, Offset: []int{1640, 1914, 1938}}
+	posting = objs.Posting{FieldName: "Modified", Term: "河东区", Docid: docid}
 	ps = append(ps, posting)
-	posting = objs.Posting{Term: "英雄", Docid: docid, TermFreq: 6, Offset: []int{5048, 6813, 5019, 5074, 6339, 6946}}
+	posting = objs.Posting{FieldName: "Saled", Term: "河西区", Docid: docid}
 	ps = append(ps, posting)
-	posting = objs.Posting{Term: "传说", Docid: docid, TermFreq: 2, Offset: []int{4247, 6868}}
-	ps = append(ps, posting)
-	doc = objs.Doc{Body: "银河英雄传说", Title: "五二班", Price: 5.20}
+	doc = objs.Doc{Ident: "88.199.1/ccc.def", Data: objs.Data{Modified: "天津市河东区", Saled: "天津市河西区"}}
 	mg.AddDoc(doc, docid, ps)
 
 	docid += 1
 	ps = make(objs.Postings, 0)
-	posting = objs.Posting{Term: "万里", Docid: docid, TermFreq: 3, Offset: []int{5048, 6813, 1678}}
+	posting = objs.Posting{FieldName: "Modified", Term: "南昌市", Docid: docid}
 	ps = append(ps, posting)
-	posting = objs.Posting{Term: "长城", Docid: docid, TermFreq: 4, Offset: []int{4247, 746, 778, 3110}}
+	posting = objs.Posting{FieldName: "Saled", Term: "吉安市", Docid: docid}
 	ps = append(ps, posting)
-	doc = objs.Doc{Body: "中国万里长城", Title: "五三班", Price: 5.30}
+	doc = objs.Doc{Ident: "88.199.1/ddd.def", Data: objs.Data{Modified: "江西省南昌市", Saled: "江西省吉安市"}}
 	mg.AddDoc(doc, docid, ps)
 
-	trackid := rand.Intn(999) + 1
+	trackid := uint64(rand.Intn(999) + 1)
 	ctx := context.WithValue(context.Background(), "trackid", trackid)
-	ret, _ := mg.Retrieve(ctx, "英雄")
+	ret, _ := mg.Retrieve(ctx, "Modified", "河东区")
 	t.Log(ret)
-	ret, _ = mg.Retrieve(ctx, "万里")
+	ret, _ = mg.Retrieve(ctx, "Saled", "河东区")
 	t.Log(ret)
 
 	docid += 1
 	ps = make(objs.Postings, 0)
-	posting = objs.Posting{Term: "埃及", Docid: docid, TermFreq: 1, Offset: []int{5123}}
+	posting = objs.Posting{FieldName: "Modified", Term: "南昌市", Docid: docid}
 	ps = append(ps, posting)
-	posting = objs.Posting{Term: "金字塔", Docid: docid, TermFreq: 2, Offset: []int{4320, 756}}
+	posting = objs.Posting{FieldName: "Saled", Term: "井冈山市", Docid: docid}
 	ps = append(ps, posting)
-	doc = objs.Doc{Body: "埃及金字塔", Title: "五四班", Price: 5.40}
+	doc = objs.Doc{Ident: "88.199.1/eee.def", Data: objs.Data{Modified: "江西省南昌市", Saled: "江西省井冈山市"}}
 	mg.AddDoc(doc, docid, ps)
 
-	ret, _ = mg.Retrieve(ctx, "埃及")
+	ret, _ = mg.Retrieve(ctx, "Modified", "南昌市")
 	t.Log(ret)
 }
