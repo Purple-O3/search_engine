@@ -42,7 +42,7 @@ func newPool(host string, port string, password string, index int, timeout int) 
 
 func (rd *wrapRedis) Set(k []byte, v []byte) error {
 	defer func(cost func() time.Duration) {
-		log.Warnf("trackid:%d, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
+		log.Warnf("trackid:%v, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
 
 	log.Debugf("key:%s", tools.Bytes2Str(k))
@@ -54,7 +54,7 @@ func (rd *wrapRedis) Set(k []byte, v []byte) error {
 
 func (rd *wrapRedis) Get(k []byte) ([]byte, error) {
 	defer func(cost func() time.Duration) {
-		log.Warnf("trackid:%d, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
+		log.Warnf("trackid:%v, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
 
 	log.Debugf("key:%s", tools.Bytes2Str(k))

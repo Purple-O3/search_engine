@@ -58,6 +58,12 @@ type RetreiveTerm struct {
 	Operator        string
 }
 
+type RetreiveReq struct {
+	RetreiveTerms []RetreiveTerm
+	Offset        int
+	Limit         int
+}
+
 type RecallPostingList []RecallPosting
 
 //实现排序

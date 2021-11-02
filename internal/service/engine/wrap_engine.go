@@ -22,40 +22,40 @@ func CloseEg() {
 
 func RetrieveDoc(ctx context.Context, retreiveTerms []objs.RetreiveTerm) objs.RecallPostingList {
 	defer func(cost func() time.Duration) {
-		log.Warnf("trackid:%d, cost: %.3f ms", ctx.Value("trackid").(uint64), float64(cost().Microseconds())/1000.0)
+		log.Warnf("trackid:%v, cost: %.3f ms", ctx.Value("trackid"), float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
 
 	repl := eg.retrieveDoc(ctx, retreiveTerms)
-	log.Infof("trackid:%d, RetreiveTerm:%v, repl:%v", ctx.Value("trackid").(uint64), retreiveTerms, repl)
+	log.Infof("trackid:%v, RetreiveTerm:%v, repl:%v", ctx.Value("trackid"), retreiveTerms, repl)
 	return repl
 }
 
 func AddDoc(ctx context.Context, doc objs.Doc) uint64 {
 	defer func(cost func() time.Duration) {
-		log.Warnf("trackid:%d, cost: %.3f ms", ctx.Value("trackid").(uint64), float64(cost().Microseconds())/1000.0)
+		log.Warnf("trackid:%v, cost: %.3f ms", ctx.Value("trackid"), float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
 
 	docid := uint64(idgenerator.Generate())
 	eg.addDoc(ctx, doc, docid)
-	log.Infof("trackid:%d, docid:%d, doc:%v", ctx.Value("trackid").(uint64), docid, doc)
+	log.Infof("trackid:%v, docid:%d, doc:%v", ctx.Value("trackid"), docid, doc)
 	return docid
 }
 
 func DelDoc(ctx context.Context, docid uint64) {
 	defer func(cost func() time.Duration) {
-		log.Warnf("trackid:%d, cost: %.3f ms", ctx.Value("trackid").(uint64), float64(cost().Microseconds())/1000.0)
+		log.Warnf("trackid:%v, cost: %.3f ms", ctx.Value("trackid"), float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
 
 	eg.delDoc(docid)
-	log.Infof("trackid:%d, docid:%d", ctx.Value("trackid").(uint64), docid)
+	log.Infof("trackid:%v, docid:%d", ctx.Value("trackid"), docid)
 }
 
 func DocIsDel(ctx context.Context, docid uint64) bool {
 	defer func(cost func() time.Duration) {
-		log.Warnf("trackid:%d, cost: %.3f ms", ctx.Value("trackid").(uint64), float64(cost().Microseconds())/1000.0)
+		log.Warnf("trackid:%v, cost: %.3f ms", ctx.Value("trackid"), float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
 
 	deleted := eg.docIsDel(docid)
-	log.Infof("trackid:%d, docid:%d, delete:%t", ctx.Value("trackid").(uint64), docid, deleted)
+	log.Infof("trackid:%v, docid:%d, delete:%t", ctx.Value("trackid"), docid, deleted)
 	return deleted
 }

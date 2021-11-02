@@ -72,7 +72,7 @@ func (eg *engine) retrieveDoc(ctx context.Context, retreiveTerms []objs.Retreive
 	}
 
 	if !hasInter {
-		log.Debugf("trackid:%d, replUniqUnion:%v", ctx.Value("trackid").(uint64), replUniqUnion)
+		log.Debugf("trackid:%v, replUniqUnion:%v", ctx.Value("trackid"), replUniqUnion)
 		return eg.ranker.Rank(replUniqUnion)
 	}
 
@@ -94,7 +94,7 @@ func (eg *engine) retrieveDoc(ctx context.Context, retreiveTerms []objs.Retreive
 	}
 
 	replCal := eg.calInter(replUniqUnion, replUniqInters)
-	log.Debugf("trackid:%d, replUniqUnion:%v, replUniqInters:%v replCal:%v", ctx.Value("trackid").(uint64), replUniqUnion, replUniqInters, replCal)
+	log.Debugf("trackid:%v, replUniqUnion:%v, replUniqInters:%v replCal:%v", ctx.Value("trackid"), replUniqUnion, replUniqInters, replCal)
 	return eg.ranker.Rank(replCal)
 }
 
@@ -192,7 +192,7 @@ func (eg *engine) filter(repo objs.RecallPosting, termIntervals []objs.RetreiveT
 func (eg *engine) addDoc(ctx context.Context, doc objs.Doc, docid uint64) {
 	ps := eg.analyzer.Analysis(docid, doc)
 	eg.datamanager.AddDoc(doc, docid, ps)
-	log.Debugf("trackid:%d, docid:%d, ps:%v", ctx.Value("trackid").(uint64), docid, ps)
+	log.Debugf("trackid:%v, docid:%d, ps:%v", ctx.Value("trackid"), docid, ps)
 }
 
 func (eg *engine) delDoc(docid uint64) {

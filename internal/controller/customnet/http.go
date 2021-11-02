@@ -125,7 +125,7 @@ func docIsDel(ctx *gin.Context) {
 
 func retrieveDoc(ctx *gin.Context) {
 	respData := make(map[string]interface{})
-	var rr RetreiveReq
+	var rr objs.RetreiveReq
 	if err := ctx.BindJSON(&rr); err != nil {
 		respData["code"] = -1
 		respData["message"] = err.Error()
@@ -139,9 +139,16 @@ func retrieveDoc(ctx *gin.Context) {
 	newCtx := context.WithValue(ctx, "trackid", trackid)
 
 	repl := engine.RetrieveDoc(newCtx, rr.RetreiveTerms)
+	replLen := len(repl)
 
 	respData["code"] = 0
 	respData["message"] = "ok"
-	respData["result"] = repl
+	respData["totalCount"] = replLen
+	end := rr.Offset + rr.Limit
+	if replLen >= end {
+		respData["result"] = repl[:end]
+	} else {
+		respData["result"] = repl
+	}
 	ctx.JSON(http.StatusOK, respData)
 }

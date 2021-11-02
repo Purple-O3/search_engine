@@ -31,7 +31,7 @@ func NewRocksdb(path string) (*wrapRocksdb, error) {
 
 func (rs *wrapRocksdb) Set(k []byte, v []byte) error {
 	defer func(cost func() time.Duration) {
-		log.Debugf("trackid:%d, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
+		log.Debugf("trackid:%v, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
 
 	log.Debugf("key:%s", tools.Bytes2Str(k))
@@ -40,7 +40,7 @@ func (rs *wrapRocksdb) Set(k []byte, v []byte) error {
 
 func (rs *wrapRocksdb) Get(k []byte) ([]byte, error) {
 	defer func(cost func() time.Duration) {
-		log.Debugf("trackid:%d, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
+		log.Debugf("trackid:%v, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
 
 	s, err := rs.DB.Get(rs.RO, k)

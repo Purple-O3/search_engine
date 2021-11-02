@@ -73,7 +73,7 @@ func (mg *Manager) AddDoc(doc objs.Doc, docid uint64, ps objs.Postings) {
 
 func (mg *Manager) Retrieve(ctx context.Context, fieldName string, term string) (objs.RecallPostingList, error) {
 	defer func(cost func() time.Duration) {
-		log.Warnf("trackid:%d, cost: %.3f ms", ctx.Value("trackid").(uint64), float64(cost().Microseconds())/1000.0)
+		log.Warnf("trackid:%v, cost: %.3f ms", ctx.Value("trackid"), float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
 
 	pl := make(objs.PostingList, 0)
@@ -86,7 +86,7 @@ func (mg *Manager) Retrieve(ctx context.Context, fieldName string, term string) 
 	}
 	plLen := len(pl)
 	if plLen <= 0 {
-		log.Debugf("trackid:%d, pl:nil", ctx.Value("trackid"))
+		log.Debugf("trackid:%v, pl:nil", ctx.Value("trackid"))
 		return nil, errors.New("empty")
 	}
 
@@ -111,6 +111,6 @@ func (mg *Manager) Retrieve(ctx context.Context, fieldName string, term string) 
 		recallPl = append(recallPl, postingRec)
 	}
 
-	log.Debugf("trackid:%d, repl:%v", ctx.Value("trackid").(uint64), recallPl)
+	log.Debugf("trackid:%v, repl:%v", ctx.Value("trackid"), recallPl)
 	return recallPl, nil
 }

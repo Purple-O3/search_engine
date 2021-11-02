@@ -25,7 +25,7 @@ func TestGetAddDocArgs(t *testing.T) {
 }
 
 func TestGetRetriveArgs(t *testing.T) {
-	var rr RetreiveReq
+	var rr objs.RetreiveReq
 	rr.RetreiveTerms = []objs.RetreiveTerm{{"Modified", "北京", objs.Eq, objs.Union}, {"Num", 12, objs.Gt, objs.Filter}}
 	rrByte, _ := json.Marshal(&rr)
 	t.Log(string(rrByte))
