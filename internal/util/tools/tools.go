@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"search_engine/internal/service/objs"
 	"strings"
 	"time"
 	"unsafe"
@@ -54,29 +55,24 @@ func Camel2SnakeString(s string) string {
 
 func Snake2CamelString(s string) string {
 	data := make([]byte, 0, len(s))
-	j := false
-	k := false
-	num := len(s) - 1
+	flag, num := true, len(s)-1
 	for i := 0; i <= num; i++ {
 		d := s[i]
-		if k == false && d >= 'A' && d <= 'Z' {
-			k = true
-		}
-		if d >= 'a' && d <= 'z' && (j || k == false) {
-			d = d - 32
-			j = false
-			k = true
-		}
-		if k && d == '_' && num > i && s[i+1] >= 'a' && s[i+1] <= 'z' {
-			j = true
+		if d == '_' {
+			flag = true
 			continue
+		} else if flag {
+			if d >= 'a' && d <= 'z' {
+				d = d - 32
+			}
+			flag = false
 		}
 		data = append(data, d)
 	}
 	return string(data[:])
 }
 
-func ConvStruct2Map(s interface{}) (map[string]string, error) {
+func ConvStruct2Map(s interface{}) (map[string]objs.FieldInfo, error) {
 	v := reflect.ValueOf(s)
 	if v.Kind() == reflect.Ptr {
 		v = v.Elem()
@@ -85,20 +81,20 @@ func ConvStruct2Map(s interface{}) (map[string]string, error) {
 		return nil, errors.New("kind is not struct")
 	}
 
-	objMap := make(map[string]string, 0)
-	t := v.Type()
+	fieldMap := make(map[string]objs.FieldInfo, 0)
 	for i := 0; i < v.NumField(); i++ {
-		if v.Field(i).Kind() == reflect.Struct {
-			if subObjMap, err := ConvStruct2Map(v.Field(i).Interface()); err == nil {
-				for key, value := range subObjMap {
-					objMap[key] = value
+		if v.Field(i).Kind() == reflect.Struct && v.Type().Field(i).Type.Name() == v.Type().Field(i).Name {
+			if subFieldMap, err := ConvStruct2Map(v.Field(i).Interface()); err == nil {
+				for fieldName, fieldInfo := range subFieldMap {
+					fieldMap[fieldName] = fieldInfo
 				}
 			}
-		} else {
-			fieldName := t.Field(i).Name
-			fieldValue := fmt.Sprintf("%v", v.Field(i).Interface())
-			objMap[fieldName] = fieldValue
+		} else if v.Field(i).CanInterface() { //是否需判断零值
+			fieldName := v.Type().Field(i).Name
+			fvalue := fmt.Sprintf("%v", v.Field(i).Interface())
+			ftype := v.Type().Field(i).Tag.Get("search_type")
+			fieldMap[fieldName] = objs.FieldInfo{ftype, fvalue}
 		}
 	}
-	return objMap, nil
+	return fieldMap, nil
 }

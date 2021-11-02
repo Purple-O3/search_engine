@@ -65,7 +65,7 @@ func DocIsDel(ctx context.Context, docid uint64) bool {
 		log.Warnf("trackid:%d, cost: %.3f ms", ctx.Value("trackid").(uint64), float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
 
-	del := eg.docIsDel(docid)
-	log.Infof("trackid:%d, docid:%d, delete:%t", ctx.Value("trackid").(uint64), docid, delete)
-	return del
+	deleted := eg.docIsDel(docid)
+	log.Infof("trackid:%d, docid:%d, delete:%t", ctx.Value("trackid").(uint64), docid, deleted)
+	return deleted
 }

@@ -31,24 +31,24 @@ func TestAll(t *testing.T) {
 
 	invertedIndex := NewInvertedIndex(s)
 	var docid uint64 = 0
-	posting := objs.Posting{"唐时", docid, 2, []int{4, 6}}
-	invertedIndex.Set(posting.Term, posting)
+	posting := objs.Posting{"context", "唐时", docid}
+	invertedIndex.Set(posting.FieldName+"_"+posting.Term, posting)
 	docid = 1
-	posting = objs.Posting{"明月", docid, 1, []int{7}}
-	invertedIndex.Set(posting.Term, posting)
-	pl, _ := invertedIndex.Get(posting.Term)
+	posting = objs.Posting{"context", "明月", docid}
+	invertedIndex.Set(posting.FieldName+"_"+posting.Term, posting)
+	pl, _ := invertedIndex.Get(posting.FieldName + "_" + posting.Term)
 	t.Log(pl)
 
 	positiveIndex := NewPositiveIndex(s)
 	docid = 2
 	docidString := strconv.FormatUint(docid, 10)
-	docKey := docidString + "_text"
+	docKey := "doc" + docidString
 	text := "汉时"
 	positiveIndex.Set(docKey, text)
 	docid = 3
 	text = "关"
 	docidString = strconv.FormatUint(docid, 10)
-	docKey = docidString + "_text"
+	docKey = "doc" + docidString
 	positiveIndex.Set(docKey, text)
 	value, _ := positiveIndex.Get(docKey)
 	t.Log(value)

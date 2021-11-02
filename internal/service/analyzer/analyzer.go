@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+const NotSplit = "keyword"
+
 type Analyzer interface {
 	Analysis(docid uint64, doc interface{}) objs.Postings
 }
@@ -29,23 +31,31 @@ func newCustomAnalyzer(stopWordPath string) *customAnalyzer {
 
 func (ca *customAnalyzer) Analysis(docid uint64, doc interface{}) objs.Postings {
 	ps := make(objs.Postings, 0)
-	objMap := make(map[string]string, 0)
-	objMap, _ = tools.ConvStruct2Map(doc)
+	//TODO:挪位置
+	fieldMap, _ := tools.ConvStruct2Map(doc)
 	set := hashset.NewSet()
 
-	for fieldName, fieldValue := range objMap {
-		set.Clear()
-		tokens := ca.ti.getTokens(fieldValue)
-		for _, token := range tokens {
-			token = strings.TrimSpace(token)
-			set.Add(token)
+	for fieldName, fieldInfo := range fieldMap {
+		fieldValue := fieldInfo.Value
+		fieldType := fieldInfo.Type
+		var terms []string
+		if fieldType == NotSplit {
+			terms = []string{fieldValue}
+		} else {
+			set.Clear()
+			tokens := ca.ti.getTokens(fieldValue)
+			for _, token := range tokens {
+				token = strings.TrimSpace(token)
+				set.Add(token)
+			}
+			uniqTokens := set.GetAll()
+			terms = ca.tf.filter(uniqTokens)
 		}
-		uniqTokens := set.GetAll()
-		terms := ca.tf.filter(uniqTokens)
 
 		for _, term := range terms {
 			var posting objs.Posting
-			posting.FieldTerm = fieldName + "_" + term
+			posting.FieldName = fieldName
+			posting.Term = term
 			posting.Docid = docid
 			/*posting.TermFreq = strings.Count(doc, term)
 			posting.Offset = make([]int, 0)

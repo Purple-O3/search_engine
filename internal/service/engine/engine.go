@@ -2,14 +2,16 @@ package engine
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	dm "search_engine/internal/model/datamanager"
 	al "search_engine/internal/service/analyzer"
 	"search_engine/internal/service/objs"
 	rk "search_engine/internal/service/rank"
 	bf "search_engine/internal/util/bloomfilter"
 	"search_engine/internal/util/log"
+	"search_engine/internal/util/tools"
 	"sort"
-	"strings"
 )
 
 type engine struct {
@@ -21,13 +23,13 @@ type engine struct {
 }
 
 func newEngine(analyzerStopWordPath string, dbPath string, dbHost string, dbPort string, dbPassword string, dbIndex int, dbTimeout int, bloomfilterMiscalRate float64, bloomfilterAddSize uint64) *engine {
-	eg := new(engine)
-	eg.docid = 0
-	eg.analyzer = al.AnalyzerFactory(analyzerStopWordPath)
-	eg.ranker = rk.RankerFactory()
-	eg.bloomfilter = bf.NewBloomFilter(bloomfilterMiscalRate, bloomfilterAddSize)
-	eg.datamanager = dm.NewManager(dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout)
-	return eg
+	egn := new(engine)
+	egn.docid = 0
+	egn.analyzer = al.AnalyzerFactory(analyzerStopWordPath)
+	egn.ranker = rk.RankerFactory()
+	egn.bloomfilter = bf.NewBloomFilter(bloomfilterMiscalRate, bloomfilterAddSize)
+	egn.datamanager = dm.NewManager(dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout)
+	return egn
 }
 
 func (eg *engine) close() {
@@ -37,15 +39,21 @@ func (eg *engine) close() {
 func (eg *engine) retrieveDoc(ctx context.Context, retreiveTerms []objs.RetreiveTerm) objs.RecallPostingList {
 	replUnion := make(objs.RecallPostingList, 0)
 	replInters := make([]objs.RecallPostingList, 0)
+	termIntervals := make([]objs.RetreiveTerm, 0)
 	hasInter := false
 	//TODO:开协程并发请求
 	for _, terminfo := range retreiveTerms {
-		if repl, err := eg.datamanager.Retrieve(ctx, terminfo.Field, terminfo.FieldData); err == nil {
-			if terminfo.Operator == objs.Union {
-				replUnion = append(replUnion, repl...)
-			} else if terminfo.Operator == objs.Inter {
-				replInters = append(replInters, repl)
-				hasInter = true
+		if terminfo.TermType != objs.Eq {
+			termIntervals = append(termIntervals, terminfo)
+		} else {
+			term := fmt.Sprintf("%v", terminfo.Term)
+			if repl, err := eg.datamanager.Retrieve(ctx, terminfo.FieldName, term); err == nil {
+				if terminfo.Operator == objs.Union {
+					replUnion = append(replUnion, repl...)
+				} else if terminfo.Operator == objs.Inter {
+					replInters = append(replInters, repl)
+					hasInter = true
+				}
 			}
 		}
 	}
@@ -55,7 +63,7 @@ func (eg *engine) retrieveDoc(ctx context.Context, retreiveTerms []objs.Retreive
 	replUniqUnion := make(objs.RecallPostingList, 0)
 	docidSet := make(map[uint64]bool)
 	for _, reposting := range replUnion {
-		if !eg.filter(reposting, titleMust, priceStart, priceEnd) {
+		if !eg.filter(reposting, termIntervals) {
 			if _, ok := docidSet[reposting.Docid]; !ok {
 				docidSet[reposting.Docid] = true
 				replUniqUnion = append(replUniqUnion, reposting)
@@ -75,7 +83,7 @@ func (eg *engine) retrieveDoc(ctx context.Context, retreiveTerms []objs.Retreive
 		plUniqInter := make(objs.RecallPostingList, 0)
 		docidSet = make(map[uint64]bool)
 		for _, reposting := range repl {
-			if !eg.filter(reposting, titleMust, priceStart, priceEnd) {
+			if !eg.filter(reposting, termIntervals) {
 				if _, ok := docidSet[reposting.Docid]; !ok {
 					docidSet[reposting.Docid] = true
 					plUniqInter = append(plUniqInter, reposting)
@@ -141,15 +149,44 @@ finally:
 	return replCal
 }
 
-func (eg *engine) filter(repo objs.RecallPosting, titleMust string, priceStart float64, priceEnd float64) bool {
-	if !eg.docIsDel(repo.Docid) {
-		if strings.Contains(repo.Title, titleMust) {
-			if repo.Price >= priceStart && repo.Price <= priceEnd {
-				return false
+func (eg *engine) filter(repo objs.RecallPosting, termIntervals []objs.RetreiveTerm) bool {
+	docMap := make(map[string]interface{})
+	docByte, _ := json.Marshal(repo.Doc)
+	_ = json.Unmarshal(docByte, &docMap)
+	if eg.docIsDel(repo.Docid) {
+		return true
+	}
+	for _, ti := range termIntervals {
+		tiResult := false
+		if ti.TermType&objs.Eq != 0 {
+			ok, err := tools.InterfaceEq(docMap[ti.FieldName], ti.Term)
+			if err != nil {
+				log.Errorf("%v", err)
+				return true
 			}
+			tiResult = tiResult || ok
+		}
+		if ti.TermType&objs.Gt != 0 {
+			ok, err := tools.InterfaceGt(docMap[ti.FieldName], ti.Term)
+			if err != nil {
+				log.Errorf("%v", err)
+				return true
+			}
+			tiResult = tiResult || ok
+		}
+		if ti.TermType&objs.Lt != 0 {
+			ok, err := tools.InterfaceLt(docMap[ti.FieldName], ti.Term)
+			if err != nil {
+				log.Errorf("%v", err)
+				return true
+			}
+			tiResult = tiResult || ok
+		}
+		if tiResult == false {
+			return true
 		}
 	}
-	return true
+	return false
 }
 
 func (eg *engine) addDoc(ctx context.Context, doc objs.Doc, docid uint64) {
