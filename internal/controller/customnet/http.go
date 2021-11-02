@@ -44,7 +44,6 @@ func (ch *customHttp) StartNet(ip string, port string) {
 	router := gin.New()
 	router.Use(gin.Recovery())
 	router.POST("/add_doc", addDoc)
-	router.POST("/add_doc_4test", addDoc4Test)
 	router.GET("/del_doc", delDoc)
 	router.GET("/doc_isdel", docIsDel)
 	router.POST("/retrieve", retrieveDoc)
@@ -54,11 +53,11 @@ func (ch *customHttp) StartNet(ip string, port string) {
 }
 
 func addDoc(ctx *gin.Context) {
-	var respData RespData
+	respData := make(map[string]interface{})
 	var docReq objs.Doc
 	if err := ctx.BindJSON(&docReq); err != nil {
-		respData.Code = -1
-		respData.Message = err.Error()
+		respData["code"] = -1
+		respData["message"] = err.Error()
 		ctx.JSON(http.StatusOK, respData)
 		return
 	}
@@ -69,42 +68,19 @@ func addDoc(ctx *gin.Context) {
 	newCtx := context.WithValue(ctx, "trackid", trackid)
 	docid := engine.AddDoc(newCtx, docReq)
 
-	respData.Code = 0
-	respData.Message = "ok"
-	respData.Result.Docid = docid
-	ctx.JSON(http.StatusOK, respData)
-}
-
-func addDoc4Test(ctx *gin.Context) {
-	var respData RespData
-	var docReq objs.Doc
-	if err := ctx.BindJSON(&docReq); err != nil {
-		respData.Code = -1
-		respData.Message = err.Error()
-		ctx.JSON(http.StatusOK, respData)
-		return
-	}
-	trackid, err := strconv.ParseUint(ctx.GetHeader("X-Trackid"), 10, 64)
-	if err != nil {
-		trackid = uint64(idgenerator.Generate())
-	}
-	newCtx := context.WithValue(ctx, "trackid", trackid)
-	var docid uint64 = 1388185366023311360
-	docid = engine.AddDoc4Test(newCtx, docReq, docid)
-
-	respData.Code = 0
-	respData.Message = "ok"
-	respData.Result.Docid = docid
+	respData["code"] = 0
+	respData["message"] = "ok"
+	respData["docid"] = docid
 	ctx.JSON(http.StatusOK, respData)
 }
 
 func delDoc(ctx *gin.Context) {
-	var respData RespData
+	respData := make(map[string]interface{})
 	docidString := ctx.Query("docid")
 	docid, err := strconv.ParseUint(docidString, 10, 64)
 	if err != nil {
-		respData.Code = -1
-		respData.Message = err.Error()
+		respData["code"] = -1
+		respData["message"] = err.Error()
 		ctx.JSON(http.StatusOK, respData)
 		return
 	}
@@ -115,18 +91,18 @@ func delDoc(ctx *gin.Context) {
 	newCtx := context.WithValue(ctx, "trackid", trackid)
 	engine.DelDoc(newCtx, docid)
 
-	respData.Code = 0
-	respData.Message = "ok"
+	respData["code"] = 0
+	respData["message"] = "ok"
 	ctx.JSON(http.StatusOK, respData)
 }
 
 func docIsDel(ctx *gin.Context) {
-	var respData RespData
+	respData := make(map[string]interface{})
 	docidString := ctx.Query("docid")
 	docid, err := strconv.ParseUint(docidString, 10, 64)
 	if err != nil {
-		respData.Code = -1
-		respData.Message = err.Error()
+		respData["code"] = -1
+		respData["message"] = err.Error()
 		ctx.JSON(http.StatusOK, respData)
 		return
 	}
@@ -138,21 +114,21 @@ func docIsDel(ctx *gin.Context) {
 	del := engine.DocIsDel(newCtx, docid)
 
 	if del {
-		respData.Code = 0
-		respData.Message = "doc is delete"
+		respData["code"] = 0
+		respData["message"] = "doc is delete"
 	} else {
-		respData.Code = 0
-		respData.Message = "doc is not delete"
+		respData["code"] = 0
+		respData["message"] = "doc is not delete"
 	}
 	ctx.JSON(http.StatusOK, respData)
 }
 
 func retrieveDoc(ctx *gin.Context) {
-	var respData RespData
+	respData := make(map[string]interface{})
 	var rr RetreiveReq
 	if err := ctx.BindJSON(&rr); err != nil {
-		respData.Code = -1
-		respData.Message = err.Error()
+		respData["code"] = -1
+		respData["message"] = err.Error()
 		ctx.JSON(http.StatusOK, respData)
 		return
 	}
@@ -164,8 +140,8 @@ func retrieveDoc(ctx *gin.Context) {
 
 	repl := engine.RetrieveDoc(newCtx, rr.RetreiveTerms)
 
-	respData.Code = 0
-	respData.Message = "ok"
-	respData.Result.Repl = repl
+	respData["code"] = 0
+	respData["message"] = "ok"
+	respData["result"] = repl
 	ctx.JSON(http.StatusOK, respData)
 }

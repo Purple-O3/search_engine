@@ -3,8 +3,8 @@ package objs
 import "time"
 
 type Posting struct {
-	FieldName string
-	Term      string
+	FieldName string `json:"-"`
+	Term      string `json:"-"`
 	Docid     uint64
 	//TermFreq  int
 	//Offset    []int
@@ -52,10 +52,10 @@ const (
 )
 
 type RetreiveTerm struct {
-	FieldName string      `json:"fieldName"`
-	Term      interface{} `json:"term"`
-	TermType  int
-	Operator  string `json:"operator"`
+	FieldName       string
+	Term            interface{}
+	TermCompareType int
+	Operator        string
 }
 
 type RecallPostingList []RecallPosting

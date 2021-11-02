@@ -43,7 +43,7 @@ func (eg *engine) retrieveDoc(ctx context.Context, retreiveTerms []objs.Retreive
 	hasInter := false
 	//TODO:开协程并发请求
 	for _, terminfo := range retreiveTerms {
-		if terminfo.TermType != objs.Eq {
+		if terminfo.TermCompareType != objs.Eq {
 			termIntervals = append(termIntervals, terminfo)
 		} else {
 			term := fmt.Sprintf("%v", terminfo.Term)
@@ -158,7 +158,7 @@ func (eg *engine) filter(repo objs.RecallPosting, termIntervals []objs.RetreiveT
 	}
 	for _, ti := range termIntervals {
 		tiResult := false
-		if ti.TermType&objs.Eq != 0 {
+		if ti.TermCompareType&objs.Eq != 0 {
 			ok, err := tools.InterfaceEq(docMap[ti.FieldName], ti.Term)
 			if err != nil {
 				log.Errorf("%v", err)
@@ -166,7 +166,7 @@ func (eg *engine) filter(repo objs.RecallPosting, termIntervals []objs.RetreiveT
 			}
 			tiResult = tiResult || ok
 		}
-		if ti.TermType&objs.Gt != 0 {
+		if ti.TermCompareType&objs.Gt != 0 {
 			ok, err := tools.InterfaceGt(docMap[ti.FieldName], ti.Term)
 			if err != nil {
 				log.Errorf("%v", err)
@@ -174,7 +174,7 @@ func (eg *engine) filter(repo objs.RecallPosting, termIntervals []objs.RetreiveT
 			}
 			tiResult = tiResult || ok
 		}
-		if ti.TermType&objs.Lt != 0 {
+		if ti.TermCompareType&objs.Lt != 0 {
 			ok, err := tools.InterfaceLt(docMap[ti.FieldName], ti.Term)
 			if err != nil {
 				log.Errorf("%v", err)

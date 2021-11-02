@@ -8,13 +8,13 @@ import (
 )
 
 type Data struct {
-	Modified  string `json:"modified"`
-	Saled     string `json:"saled"`
+	Modified  string
+	Saled     string
 	CreatedAt time.Time
 	Num       int
 }
 type Doc struct {
-	Ident string `json:"identification"`
+	Ident string
 	Data
 }
 

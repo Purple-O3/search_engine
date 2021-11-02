@@ -54,7 +54,7 @@ func TestAll(t *testing.T) {
 GET 127.0.0.1:7788/del_doc?docid=0
 GET 127.0.0.1:7788/doc_isdel?docid=3
 POST 127.0.0.1:7788/add_doc
-{"Ident":"88.199.1/fff.def","Modified":"北京市首都机场","Saled":"成都","Num":5,"CreatedAt":"2021-11-02T11:42:08.995206+08:00"}
+{"Ident":"88.199.1/fff.def","Modified":"北京市首都机场","Saled":"成都","Num":5,"CreatedAt":"2021-11-02T16:42:21.199502+08:00"}
 POST 127.0.0.1:7788/retrieve
-{"RetreiveTerms":[{"fieldName":"Modified","term":"北京","TermType":1,"operator":"or"},{"fieldName":"Num","term":12,"TermType":16,"operator":"filter"}]}
+{"RetreiveTerms":[{"FieldName":"Modified","Term":"北京","TermCompareType":1,"Operator":"or"},{"FieldName":"Num","Term":12,"TermCompareType":16,"Operator":"filter"}]}
 */

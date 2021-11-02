@@ -41,16 +41,6 @@ func AddDoc(ctx context.Context, doc objs.Doc) uint64 {
 	return docid
 }
 
-func AddDoc4Test(ctx context.Context, doc objs.Doc, docid uint64) uint64 {
-	defer func(cost func() time.Duration) {
-		log.Warnf("trackid:%d, cost: %.3f ms", ctx.Value("trackid").(uint64), float64(cost().Microseconds())/1000.0)
-	}(tools.TimeCost())
-
-	eg.addDoc(ctx, doc, docid)
-	log.Infof("trackid:%d, docid:%d, doc:%v", ctx.Value("trackid").(uint64), docid, doc)
-	return docid
-}
-
 func DelDoc(ctx context.Context, docid uint64) {
 	defer func(cost func() time.Duration) {
 		log.Warnf("trackid:%d, cost: %.3f ms", ctx.Value("trackid").(uint64), float64(cost().Microseconds())/1000.0)
