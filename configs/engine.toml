@@ -3,7 +3,7 @@ ip = ""
 port = "7788"
 
 [log]
-level = "info"       #可能的值：debug, info, warn, error
+level = "debug"       #可能的值：debug, info, warn, error
 file_path = "../logs/engine.log"
 max_size = 128       #在进行切割之前，日志文件的最大大小（以MB为单位）
 max_backups = 100    #保留旧文件的最大个数

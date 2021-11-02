@@ -35,6 +35,8 @@ type FieldInfo struct {
 	Value string
 }
 
+const NotSplit = "keyword"
+
 const (
 	Union  = "or"
 	Inter  = "and"

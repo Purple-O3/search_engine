@@ -12,13 +12,13 @@ import (
 )
 
 func init() {
-	if os.Args[1] == "7788" {
+	if len(os.Args) < 2 || os.Args[1] == "7788" {
 		viper.SetConfigName("engine")
 	} else if os.Args[1] == "7799" {
 		viper.SetConfigName("engine2")
 	}
-	viper.SetConfigType("toml")                                                     // 如果配置文件的名称中没有扩展名，则需要配置此项
-	viper.AddConfigPath("/Users/wengguan/search_code/search/search_engine/configs") // 查找配置文件所在的路径
+	viper.SetConfigType("toml")                                                            // 如果配置文件的名称中没有扩展名，则需要配置此项
+	viper.AddConfigPath("/Users/wengguan/infstr_code/indent_search/search_engine/configs") // 查找配置文件所在的路径
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(err)

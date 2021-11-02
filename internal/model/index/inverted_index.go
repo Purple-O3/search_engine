@@ -24,8 +24,9 @@ func NewInvertedIndex(db store.Store) *InvertedIndex {
 	ii.termDict[1] = nil
 	ii.use = 0
 	ii.db = db
+	ii.quit = make(chan quitGo, 1)
 	go func() {
-		now := time.Now().Second()
+		now := time.Now().Unix()
 		lastTime := now
 		for {
 			select {
@@ -34,8 +35,8 @@ func NewInvertedIndex(db store.Store) *InvertedIndex {
 				q.done <- struct{}{}
 				return
 			default:
-				now = time.Now().Second()
-				if ii.Len() > 10000 || now-lastTime > 1 {
+				now = time.Now().Unix()
+				if ii.Len() > 10000 || now-lastTime >= 1 {
 					ii.flushDB()
 					lastTime = now
 				} else {
@@ -53,7 +54,7 @@ type quitGo struct {
 
 func (ii *InvertedIndex) FlushAll() {
 	q := quitGo{}
-	q.done = make(chan struct{})
+	q.done = make(chan struct{}, 1)
 	ii.quit <- q
 	<-q.done
 }
@@ -84,7 +85,10 @@ func (ii *InvertedIndex) Get(term string) (objs.PostingList, bool) {
 
 func (ii *InvertedIndex) flushDB() {
 	defer func(cost func() time.Duration) {
-		log.Warnf("trackid:%d, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
+		t := cost().Microseconds()
+		if t > 1000 {
+			log.Warnf("trackid:%d, cost: %.3f ms", 0, float64(t)/1000.0)
+		}
 	}(tools.TimeCost())
 
 	ii.rwlock.RLock()

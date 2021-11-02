@@ -13,7 +13,7 @@ func InterfaceZero(i interface{}) bool {
 func InterfaceLt(a interface{}, b interface{}) (bool, error) {
 	aValue := reflect.ValueOf(a)
 	bValue := reflect.ValueOf(b)
-	if aValue.Type() != bValue.Type() {
+	if a == nil || b == nil || aValue.Type() != bValue.Type() {
 		return false, errors.New("two compare type not equal")
 	}
 	switch a.(type) {
@@ -103,7 +103,7 @@ func InterfaceGt(a interface{}, b interface{}) (bool, error) {
 func InterfaceEq(a interface{}, b interface{}) (bool, error) {
 	aValue := reflect.ValueOf(a)
 	bValue := reflect.ValueOf(b)
-	if aValue.Type() != bValue.Type() {
+	if a == nil || b == nil || aValue.Type() != bValue.Type() {
 		return false, errors.New("two compare type not equal")
 	}
 	switch a.(type) {

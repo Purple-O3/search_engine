@@ -37,7 +37,7 @@ func TestConvStruct2Map(t *testing.T) {
 }
 
 func TestInterfaceLt(t *testing.T) {
-	var a interface{} = 10
+	var a interface{} = nil
 	var b interface{} = 15
 	var s interface{} = "hello"
 	ret, err := InterfaceLt(a, b)
