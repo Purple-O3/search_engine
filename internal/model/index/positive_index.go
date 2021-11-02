@@ -22,8 +22,9 @@ func NewPositiveIndex(db store.Store) *PositiveIndex {
 	pi.docDict[1] = nil
 	pi.use = 0
 	pi.db = db
+	pi.quit = make(chan quitGo, 1)
 	go func() {
-		now := time.Now().Second()
+		now := time.Now().Unix()
 		lastTime := now
 		for {
 			select {
@@ -32,8 +33,8 @@ func NewPositiveIndex(db store.Store) *PositiveIndex {
 				q.done <- struct{}{}
 				return
 			default:
-				now = time.Now().Second()
-				if pi.Len() > 10000 || now-lastTime > 1 {
+				now = time.Now().Unix()
+				if pi.Len() > 10000 || now-lastTime >= 1 {
 					pi.flushDB()
 					lastTime = now
 				} else {
@@ -47,7 +48,7 @@ func NewPositiveIndex(db store.Store) *PositiveIndex {
 
 func (pi *PositiveIndex) FlushAll() {
 	q := quitGo{}
-	q.done = make(chan struct{})
+	q.done = make(chan struct{}, 1)
 	pi.quit <- q
 	<-q.done
 }
@@ -75,7 +76,10 @@ func (pi *PositiveIndex) Get(key string) (string, bool) {
 
 func (pi *PositiveIndex) flushDB() {
 	defer func(cost func() time.Duration) {
-		log.Warnf("trackid:%d, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
+		t := cost().Microseconds()
+		if t > 1000 {
+			log.Warnf("trackid:%d, cost: %.3f ms", 0, float64(t)/1000.0)
+		}
 	}(tools.TimeCost())
 
 	pi.rwlock.RLock()

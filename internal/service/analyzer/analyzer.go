@@ -7,8 +7,6 @@ import (
 	"strings"
 )
 
-const NotSplit = "keyword"
-
 type Analyzer interface {
 	Analysis(docid uint64, doc interface{}) objs.Postings
 }
@@ -31,7 +29,6 @@ func newCustomAnalyzer(stopWordPath string) *customAnalyzer {
 
 func (ca *customAnalyzer) Analysis(docid uint64, doc interface{}) objs.Postings {
 	ps := make(objs.Postings, 0)
-	//TODO:挪位置
 	fieldMap, _ := tools.ConvStruct2Map(doc)
 	set := hashset.NewSet()
 
@@ -39,7 +36,7 @@ func (ca *customAnalyzer) Analysis(docid uint64, doc interface{}) objs.Postings 
 		fieldValue := fieldInfo.Value
 		fieldType := fieldInfo.Type
 		var terms []string
-		if fieldType == NotSplit {
+		if fieldType == objs.NotSplit {
 			terms = []string{fieldValue}
 		} else {
 			set.Clear()
