@@ -38,8 +38,8 @@ type FieldInfo struct {
 const NotSplit = "keyword"
 
 const (
-	Union  = "or"
-	Inter  = "and"
+	Union  = "should"
+	Inter  = "must"
 	Filter = "filter"
 )
 

@@ -89,11 +89,11 @@ func ConvStruct2Map(s interface{}) (map[string]objs.FieldInfo, error) {
 					fieldMap[fieldName] = fieldInfo
 				}
 			}
-		} else if v.Field(i).CanInterface() { //是否需判断零值
+		} else if v.Field(i).CanInterface() { //TODO:是否需判断零值
 			fieldName := v.Type().Field(i).Name
-			fvalue := fmt.Sprintf("%v", v.Field(i).Interface())
-			ftype := v.Type().Field(i).Tag.Get("search_type")
-			fieldMap[fieldName] = objs.FieldInfo{ftype, fvalue}
+			fieldValue := fmt.Sprintf("%v", v.Field(i).Interface())
+			fieldType := v.Type().Field(i).Tag.Get("search_type")
+			fieldMap[fieldName] = objs.FieldInfo{fieldType, fieldValue}
 		}
 	}
 	return fieldMap, nil

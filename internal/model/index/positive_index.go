@@ -27,20 +27,28 @@ func NewPositiveIndex(db store.Store) *PositiveIndex {
 		now := time.Now().Unix()
 		lastTime := now
 		for {
-			select {
-			case q := <-pi.quit:
-				pi.flushDB()
-				q.done <- struct{}{}
-				return
-			default:
-				now = time.Now().Unix()
-				if pi.Len() > 10000 || now-lastTime >= 1 {
+			func() {
+				defer func() {
+					if err := recover(); err != nil {
+						log.Errorf("%v", err)
+					}
+				}()
+
+				select {
+				case q := <-pi.quit:
 					pi.flushDB()
-					lastTime = now
-				} else {
-					time.Sleep(1 * time.Millisecond)
+					q.done <- struct{}{}
+					return
+				default:
+					now = time.Now().Unix()
+					if pi.Len() > 10000 || now-lastTime >= 1 {
+						pi.flushDB()
+						lastTime = now
+					} else {
+						time.Sleep(1 * time.Millisecond)
+					}
 				}
-			}
+			}()
 		}
 	}()
 	return pi

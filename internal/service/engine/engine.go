@@ -43,7 +43,7 @@ func (eg *engine) retrieveDoc(ctx context.Context, retreiveTerms []objs.Retreive
 	hasInter := false
 	//TODO:开协程并发请求
 	for _, terminfo := range retreiveTerms {
-		if terminfo.TermCompareType != objs.Eq {
+		if terminfo.Operator == objs.Filter {
 			termIntervals = append(termIntervals, terminfo)
 		} else {
 			term := fmt.Sprintf("%v", terminfo.Term)
@@ -101,7 +101,9 @@ func (eg *engine) retrieveDoc(ctx context.Context, retreiveTerms []objs.Retreive
 //TODO：抽离成公共组件
 //指针求交
 func (eg *engine) calInter(replUniqUnion objs.RecallPostingList, replUniqInters []objs.RecallPostingList) objs.RecallPostingList {
-	replUniqInters = append(replUniqInters, replUniqUnion)
+	if len(replUniqUnion) != 0 {
+		replUniqInters = append(replUniqInters, replUniqUnion)
+	}
 	replsEnd := make([]int, len(replUniqInters))
 	minEnd := len(replUniqInters[0])
 	minIndex := 0
@@ -152,6 +154,7 @@ finally:
 func (eg *engine) filter(repo objs.RecallPosting, termIntervals []objs.RetreiveTerm) bool {
 	docMap := make(map[string]interface{})
 	docByte, _ := json.Marshal(repo.Doc)
+	//TODO:目前map里不能嵌套map
 	_ = json.Unmarshal(docByte, &docMap)
 	if eg.docIsDel(repo.Docid) {
 		return true

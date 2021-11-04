@@ -29,20 +29,28 @@ func NewInvertedIndex(db store.Store) *InvertedIndex {
 		now := time.Now().Unix()
 		lastTime := now
 		for {
-			select {
-			case q := <-ii.quit:
-				ii.flushDB()
-				q.done <- struct{}{}
-				return
-			default:
-				now = time.Now().Unix()
-				if ii.Len() > 10000 || now-lastTime >= 1 {
+			func() {
+				defer func() {
+					if err := recover(); err != nil {
+						log.Errorf("%v", err)
+					}
+				}()
+
+				select {
+				case q := <-ii.quit:
 					ii.flushDB()
-					lastTime = now
-				} else {
-					time.Sleep(1 * time.Millisecond)
+					q.done <- struct{}{}
+					return
+				default:
+					now = time.Now().Unix()
+					if ii.Len() > 10000 || now-lastTime >= 1 {
+						ii.flushDB()
+						lastTime = now
+					} else {
+						time.Sleep(1 * time.Millisecond)
+					}
 				}
-			}
+			}()
 		}
 	}()
 	return ii
