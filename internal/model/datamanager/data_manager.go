@@ -3,7 +3,6 @@ package datamanager
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"search_engine/internal/model/index"
 	"search_engine/internal/model/store"
 	"search_engine/internal/service/objs"
@@ -84,13 +83,8 @@ func (mg *Manager) Retrieve(ctx context.Context, fieldName string, term string) 
 	if plDb, err := mg.getDbPl(fieldKey); err == nil {
 		pl = append(pl, plDb...)
 	}
-	plLen := len(pl)
-	if plLen <= 0 {
-		log.Debugf("trackid:%v, pl:nil", ctx.Value("trackid"))
-		return nil, errors.New("empty")
-	}
 
-	recallPl := make(objs.RecallPostingList, 0, plLen)
+	recallPl := make(objs.RecallPostingList, 0, len(pl))
 	for _, posting := range pl {
 		var docString string
 		docidString := strconv.FormatUint(posting.Docid, 10)

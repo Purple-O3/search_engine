@@ -66,6 +66,7 @@ func addDoc(ctx *gin.Context) {
 		trackid = uint64(idgenerator.Generate())
 	}
 	newCtx := context.WithValue(ctx, "trackid", trackid)
+
 	docid := engine.AddDoc(newCtx, docReq)
 
 	respData["code"] = 0
@@ -89,6 +90,7 @@ func delDoc(ctx *gin.Context) {
 		trackid = uint64(idgenerator.Generate())
 	}
 	newCtx := context.WithValue(ctx, "trackid", trackid)
+
 	engine.DelDoc(newCtx, docid)
 
 	respData["code"] = 0
@@ -111,6 +113,7 @@ func docIsDel(ctx *gin.Context) {
 		trackid = uint64(idgenerator.Generate())
 	}
 	newCtx := context.WithValue(ctx, "trackid", trackid)
+
 	del := engine.DocIsDel(newCtx, docid)
 
 	if del {
@@ -140,15 +143,14 @@ func retrieveDoc(ctx *gin.Context) {
 
 	repl := engine.RetrieveDoc(newCtx, rr.RetreiveTerms)
 	replLen := len(repl)
+	end := rr.Offset + rr.Limit
+	if replLen >= end {
+		repl = repl[:end]
+	}
 
 	respData["code"] = 0
 	respData["message"] = "ok"
-	respData["totalCount"] = replLen
-	end := rr.Offset + rr.Limit
-	if replLen >= end {
-		respData["result"] = repl[:end]
-	} else {
-		respData["result"] = repl
-	}
+	respData["count"] = replLen
+	respData["result"] = repl
 	ctx.JSON(http.StatusOK, respData)
 }

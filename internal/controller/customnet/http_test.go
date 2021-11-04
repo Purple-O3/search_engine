@@ -26,7 +26,7 @@ func TestGetAddDocArgs(t *testing.T) {
 
 func TestGetRetriveArgs(t *testing.T) {
 	var rr objs.RetreiveReq
-	rr.RetreiveTerms = []objs.RetreiveTerm{{"Modified", "北京", objs.Eq, objs.Union}, {"Num", 12, objs.Gt, objs.Filter}}
+	rr.RetreiveTerms = []objs.RetreiveTerm{{"Modified", "北京", objs.Eq, objs.Union}, {"Ident", "88.199.1/fff.def", objs.Eq, objs.Union}, {"Num", 12, objs.Gt, objs.Filter}, {"CreatedAt", "2021-11-03T15:14:05.126975+08:00", objs.Lt, objs.Filter}}
 	rrByte, _ := json.Marshal(&rr)
 	t.Log(string(rrByte))
 }
@@ -54,7 +54,7 @@ func TestAll(t *testing.T) {
 GET 127.0.0.1:7788/del_doc?docid=0
 GET 127.0.0.1:7788/doc_isdel?docid=3
 POST 127.0.0.1:7788/add_doc
-{"Ident":"88.199.1/fff.def","Modified":"北京市首都机场","Saled":"成都","Num":5,"CreatedAt":"2021-11-02T16:42:21.199502+08:00"}
+{"Ident":"88.199.1/bbb.def","Modified":"北京市首都机场","Saled":"成都","Num":13,"CreatedAt":"2021-11-02T16:42:21.199502+08:00"}
 POST 127.0.0.1:7788/retrieve
-{"RetreiveTerms":[{"FieldName":"Modified","Term":"北京","TermCompareType":1,"Operator":"or"},{"FieldName":"Num","Term":12,"TermCompareType":16,"Operator":"filter"}]}
+{"RetreiveTerms":[{"FieldName":"Modified","Term":"北京","TermCompareType":1,"Operator":"should"},{"FieldName":"Num","Term":12,"TermCompareType":16,"Operator":"filter"}],"Offset":0,"Limit":0}
 */
