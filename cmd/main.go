@@ -6,10 +6,13 @@ import (
 	"search_engine/internal/controller/customnet"
 	"search_engine/internal/service/engine"
 	"search_engine/internal/util/log"
+	"syscall"
 
 	"github.com/spf13/viper"
 	_ "go.uber.org/automaxprocs"
 )
+
+var cn customnet.Net
 
 func init() {
 	if len(os.Args) < 2 || os.Args[1] == "7788" {
@@ -41,24 +44,26 @@ func init() {
 	dbTimeout := viper.GetInt("db.timeout")
 	bloomfilterMiscalRate := viper.GetFloat64("bloomfilter.miscal_rate")
 	bloomfilterAddSize := viper.GetUint64("bloomfilter.add_size")
-	engine.NewEg(analyzerStopWordPath, dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout, bloomfilterMiscalRate, bloomfilterAddSize)
+	bloomfilterStorePath := viper.GetString("bloomfilter.store_path")
+	engine.NewEg(analyzerStopWordPath, dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout, bloomfilterMiscalRate, bloomfilterAddSize, bloomfilterStorePath)
 
 	ip := viper.GetString("server.ip")
 	port := viper.GetString("server.port")
-	cn := customnet.NetFactory("http")
+	cn = customnet.NetFactory("http")
 	cn.StartNet(ip, port)
 	log.Infof("server start!!!")
 }
 
 func listenSignal() {
 	c := make(chan os.Signal, 1)
-	signal.Notify(c)
+	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	<-c
 }
 
 func closeServer() {
 	engine.CloseEg()
 	log.CloseLogger()
+	cn.Shutdown()
 }
 
 func main() {

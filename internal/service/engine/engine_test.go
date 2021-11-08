@@ -28,7 +28,7 @@ func TestAll(t *testing.T) {
 	dbTimeout := 30
 	bloomfilterMiscalRate := 0.00001
 	var bloomfilterAddSize uint64 = 100000000
-	egn := newEngine(analyzerStopWordPath, dbPath, dbHost, dbPort, dbAuth, dbIndex, dbTimeout, bloomfilterMiscalRate, bloomfilterAddSize)
+	egn := newEngine(analyzerStopWordPath, dbPath, dbHost, dbPort, dbAuth, dbIndex, dbTimeout, bloomfilterMiscalRate, bloomfilterAddSize, "/Users/wengguan/infstr_code/indent_search/search_engine/data/bloomfilter")
 	defer egn.close()
 
 	var docid uint64 = 0

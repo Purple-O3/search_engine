@@ -6,6 +6,7 @@ import (
 	"search_engine/internal/service/engine"
 	"search_engine/internal/service/objs"
 	"search_engine/internal/util/idgenerator"
+	"search_engine/internal/util/log"
 	"strconv"
 
 	//"github.com/gin-contrib/pprof"
@@ -14,6 +15,7 @@ import (
 
 type Net interface {
 	StartNet(ip string, port string)
+	Shutdown()
 }
 
 func NetFactory(netType string) Net {
@@ -27,6 +29,7 @@ func NetFactory(netType string) Net {
 }
 
 type customHttp struct {
+	svr *http.Server
 }
 
 func newCustomHttp() *customHttp {
@@ -49,7 +52,22 @@ func (ch *customHttp) StartNet(ip string, port string) {
 	router.POST("/retrieve", retrieveDoc)
 	//性能调试
 	//pprof.Register(router)
-	router.Run(ip + ":" + port)
+
+	srv := &http.Server{
+		Addr:    ip + ":" + port,
+		Handler: router,
+	}
+	ch.svr = srv
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Errorf("%v", err)
+		}
+	}()
+}
+
+func (ch *customHttp) Shutdown() {
+	ctx := context.Background()
+	ch.svr.Shutdown(ctx)
 }
 
 func addDoc(ctx *gin.Context) {

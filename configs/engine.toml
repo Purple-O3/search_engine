@@ -16,6 +16,7 @@ stop_word_path = "../data/stop_word.txt"
 [bloomfilter]
 miscal_rate = 0.00001
 add_size = 100000000
+store_path = "../data/bloomfilter"
 
 [db]
 path = "../data/db/engine.db"

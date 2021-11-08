@@ -22,18 +22,19 @@ type engine struct {
 	datamanager *dm.Manager
 }
 
-func newEngine(analyzerStopWordPath string, dbPath string, dbHost string, dbPort string, dbPassword string, dbIndex int, dbTimeout int, bloomfilterMiscalRate float64, bloomfilterAddSize uint64) *engine {
+func newEngine(analyzerStopWordPath string, dbPath string, dbHost string, dbPort string, dbPassword string, dbIndex int, dbTimeout int, bloomfilterMiscalRate float64, bloomfilterAddSize uint64, bloomfilterStorePath string) *engine {
 	egn := new(engine)
 	egn.docid = 0
 	egn.analyzer = al.AnalyzerFactory(analyzerStopWordPath)
 	egn.ranker = rk.RankerFactory()
-	egn.bloomfilter = bf.NewBloomFilter(bloomfilterMiscalRate, bloomfilterAddSize)
+	egn.bloomfilter = bf.NewBloomFilter(bloomfilterMiscalRate, bloomfilterAddSize, bloomfilterStorePath)
 	egn.datamanager = dm.NewManager(dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout)
 	return egn
 }
 
 func (eg *engine) close() {
 	eg.datamanager.Close()
+	eg.bloomfilter.Save2File()
 }
 
 func (eg *engine) retrieveDoc(ctx context.Context, retreiveTerms []objs.RetreiveTerm) objs.RecallPostingList {
