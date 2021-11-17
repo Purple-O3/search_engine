@@ -53,6 +53,8 @@ func TestAll(t *testing.T) {
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	<-c
 	engine.CloseEg()
+	log.CloseLogger()
+	cn.Shutdown()
 }
 
 /*
