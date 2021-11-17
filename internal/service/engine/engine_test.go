@@ -12,15 +12,15 @@ import (
 
 func TestAll(t *testing.T) {
 	level := "debug"
-	filePath := "/Users/wengguan/infstr_code/indent_search/search_engine/logs/engine.log"
+	filePath := "../../../logs/engine.log"
 	maxSize := 128
 	maxBackups := 100
 	maxAge := 60
 	compress := true
 	log.InitLogger(level, filePath, maxSize, maxBackups, maxAge, compress)
 
-	analyzerStopWordPath := "/Users/wengguan/infstr_code/indent_search/search_engine/data/stop_word.txt"
-	dbPath := "/Users/wengguan/infstr_code/indent_search/search_engine/data/db/engine.db"
+	analyzerStopWordPath := "../../../data/stop_word.txt"
+	dbPath := "../../../data/db/engine.db"
 	dbHost := "127.0.0.1"
 	dbPort := "4379"
 	dbAuth := ""
@@ -28,7 +28,7 @@ func TestAll(t *testing.T) {
 	dbTimeout := 30
 	bloomfilterMiscalRate := 0.00001
 	var bloomfilterAddSize uint64 = 100000000
-	egn := newEngine(analyzerStopWordPath, dbPath, dbHost, dbPort, dbAuth, dbIndex, dbTimeout, bloomfilterMiscalRate, bloomfilterAddSize, "/Users/wengguan/infstr_code/indent_search/search_engine/data/bloomfilter")
+	egn := newEngine(analyzerStopWordPath, dbPath, dbHost, dbPort, dbAuth, dbIndex, dbTimeout, bloomfilterMiscalRate, bloomfilterAddSize, "../../../data/bloomfilter")
 	defer egn.close()
 
 	var docid uint64 = 0
@@ -70,8 +70,8 @@ func TestAll(t *testing.T) {
 
 /*
 func TestCalInter(t *testing.T) {
-	analyzerStopWordPath := "/Users/wengguan/search_code/search/search_engine/configs/stop_word.txt"
-	dbPath := "/Users/wengguan/search_code/search_file/db/engine.db"
+	analyzerStopWordPath := "../../../data/stop_word.txt"
+	dbPath := "../../../data/db/engine.db"
 	dbHost := "127.0.0.1"
 	dbPort := "4379"
 	dbAuth := ""
@@ -114,8 +114,8 @@ func TestCalInter(t *testing.T) {
 }
 
 func TestWrap(t *testing.T) {
-	analyzerStopWordPath := "/Users/wengguan/search_code/search/search_engine/configs/stop_word.txt"
-	dbPath := "/Users/wengguan/search_code/search_file/db/engine.db"
+	analyzerStopWordPath := "../../../data/stop_word.txt"
+	dbPath := "../../../data/db/engine.db"
 	dbHost := "127.0.0.1"
 	dbPort := "4379"
 	dbAuth := ""
@@ -152,8 +152,8 @@ func TestWrap(t *testing.T) {
 }
 
 func TestAll2(t *testing.T) {
-	analyzerStopWordPath := "/Users/wengguan/search_code/search/search_engine/configs/stop_word.txt"
-	dbPath := "/Users/wengguan/search_code/search_file/db/engine.db"
+	analyzerStopWordPath := "../../../data/stop_word.txt"
+	dbPath := "../../../data/db/engine.db"
 	dbHost := "127.0.0.1"
 	dbPort := "4379"
 	dbAuth := ""

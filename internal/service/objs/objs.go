@@ -21,7 +21,9 @@ type Data struct {
 }
 
 type Doc struct {
-	Ident string `search_type:"keyword"`
+	Ident     string `search_type:"keyword"`
+	Companyid int
+	Projectid int
 	Data
 }
 

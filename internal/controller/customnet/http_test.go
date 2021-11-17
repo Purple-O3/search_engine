@@ -2,16 +2,19 @@ package customnet
 
 import (
 	"encoding/json"
+	"os"
+	"os/signal"
 	"search_engine/internal/service/engine"
 	"search_engine/internal/service/objs"
 	"search_engine/internal/util/log"
+	"syscall"
 	"testing"
 	"time"
 )
 
 func TestGetAddDocArgs(t *testing.T) {
 	level := "debug"
-	filePath := "/Users/wengguan/search_code/search_file/logs/engine.log"
+	filePath := "../../../logs/engine.log"
 	maxSize := 128
 	maxBackups := 100
 	maxAge := 60
@@ -32,8 +35,8 @@ func TestGetRetriveArgs(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
-	analyzerStopWordPath := "/Users/wengguan/search_code/search/search_engine/configs/stop_word.txt"
-	dbPath := "/Users/wengguan/search_code/search_file/db/engine.db"
+	analyzerStopWordPath := "../../../data/stop_word.txt"
+	dbPath := "../../../data/db/engine.db"
 	dbHost := "127.0.0.1"
 	dbPort := "4379"
 	dbAuth := ""
@@ -41,12 +44,14 @@ func TestAll(t *testing.T) {
 	dbTimeout := 30
 	bloomfilterMiscalRate := 0.00001
 	var bloomfilterAddSize uint64 = 100000000
-	engine.NewEg(analyzerStopWordPath, dbPath, dbHost, dbPort, dbAuth, dbIndex, dbTimeout, bloomfilterMiscalRate, bloomfilterAddSize)
+	bloomfilterStorePath := "../../../data/bloomfilter"
+	engine.NewEg(analyzerStopWordPath, dbPath, dbHost, dbPort, dbAuth, dbIndex, dbTimeout, bloomfilterMiscalRate, bloomfilterAddSize, bloomfilterStorePath)
 	ip, port := "", "7788"
 	cn := NetFactory("http")
 	cn.StartNet(ip, port)
-	c := make(chan int)
-	_ = <-c
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	<-c
 	engine.CloseEg()
 }
 

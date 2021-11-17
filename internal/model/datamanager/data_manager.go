@@ -21,8 +21,8 @@ type Manager struct {
 func NewManager(dbPath string, dbHost string, dbPort string, dbPassword string, dbIndex int, dbTimeout int) *Manager {
 	mg := new(Manager)
 	var err error
-	//mg.db, err = store.StoreFactory("pika", dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout)
-	mg.db, err = store.StoreFactory("rocksdb", dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout)
+	mg.db, err = store.StoreFactory("pika", dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout)
+	//mg.db, err = store.StoreFactory("rocksdb", dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout)
 	if err != nil {
 		panic(err)
 	}

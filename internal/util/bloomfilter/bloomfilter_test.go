@@ -8,7 +8,7 @@ import (
 func Test(t *testing.T) {
 	nub := math.Log(2) * math.Log(2)
 	t.Log(nub)
-	bf := NewBloomFilter(0.00001, 100, "/Users/wengguan/infstr_code/indent_search/search_engine/data/bloomfilter")
+	bf := NewBloomFilter(0.00001, 100, "../../../data/bloomfilter")
 	var docid uint64
 	docid = 123
 	bf.AddNub(docid)
@@ -23,7 +23,7 @@ func Test(t *testing.T) {
 	t.Log(ret)
 	bf.Save2File()
 
-	bf = NewBloomFilter(0.00001, 100, "/Users/wengguan/infstr_code/indent_search/search_engine/data/bloomfilter")
+	bf = NewBloomFilter(0.00001, 100, "../../../data/bloomfilter")
 	mbSize := bf.Size() / 8 / 1000 / 1000
 	t.Log("MbSize:", mbSize)
 	ret = bf.CheckNub(123)
@@ -33,7 +33,7 @@ func Test(t *testing.T) {
 	ret = bf.CheckNub(124)
 	t.Log(ret)
 
-	bf = NewBloomFilter(0.00001, 100000000, "/Users/wengguan/infstr_code/indent_search/search_engine/data/bloomfilter")
+	bf = NewBloomFilter(0.00001, 100000000, "../../../data/bloomfilter")
 	mbSize = bf.Size() / 8 / 1000 / 1000
 	t.Log("MbSize:", mbSize)
 	docid = 125

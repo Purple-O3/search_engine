@@ -8,7 +8,7 @@ import (
 
 /*func TestOffset(t *testing.T) {
 	t.Log("test1")
-	stopWordPath := "/Users/wengguan/search_code/search/search_engine/configs/stop_word.txt"
+	stopWordPath := "../../../data/stop_word.txt"
 	analyzer := AnalyzerFactory(stopWordPath)
 	var docid uint64 = 0
 	doc := `中新网1月19日电 据韩媒报道，18日下午，韩国“我们共和党”在釜山举行集会，大批群众参与游行，高喊口号支持韩国前总统朴槿惠。游行队伍行进途中，一车辆突然闯入，造成7人受伤。
@@ -33,7 +33,7 @@ import (
 
 func TestAnalysis(t *testing.T) {
 	t.Log("test2")
-	stopWordPath := "/Users/wengguan/search_code/search/search_engine/configs/stop_word.txt"
+	stopWordPath := "../../../data/stop_word.txt"
 	analyzer := AnalyzerFactory(stopWordPath)
 	var docid uint64 = 0
 	doc := objs.Doc{Ident: "88.199.1/aaa.def", Data: objs.Data{Modified: "北京市丰台区", Saled: "北京市海淀区", CreatedAt: time.Now()}}

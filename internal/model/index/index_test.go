@@ -10,14 +10,14 @@ import (
 
 func TestAll(t *testing.T) {
 	level := "debug"
-	filePath := "/Users/wengguan/search_code/search_file/logs/engine.log"
+	filePath := "../../../logs/engine.log"
 	maxSize := 128
 	maxBackups := 100
 	maxAge := 60
 	compress := true
 	log.InitLogger(level, filePath, maxSize, maxBackups, maxAge, compress)
 
-	path := "/Users/wengguan/search_code/search_file/db/engine.db"
+	path := "../../../data/db/engine.db"
 	host := "192.168.3.4"
 	port := "9221"
 	auth := ""
