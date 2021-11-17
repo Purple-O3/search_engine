@@ -63,5 +63,5 @@ GET 127.0.0.1:7788/doc_isdel?docid=3
 POST 127.0.0.1:7788/add_doc
 {"Ident":"88.199.1/bbb.def","Modified":"北京市首都机场","Saled":"成都","Num":13,"CreatedAt":"2021-11-02T16:42:21.199502+08:00"}
 POST 127.0.0.1:7788/retrieve
-{"RetreiveTerms":[{"FieldName":"Modified","Term":"北京","TermCompareType":1,"Operator":"should"},{"FieldName":"Num","Term":12,"TermCompareType":16,"Operator":"filter"}],"Offset":0,"Limit":0}
+{"RetreiveTerms":[{"FieldName":"Modified","Term":"北京","TermCompareType":1,"Operator":"must"},{"FieldName":"Num","Term":12,"TermCompareType":16,"Operator":"filter"}],"Offset":0,"Limit":10}
 */
