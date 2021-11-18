@@ -161,6 +161,9 @@ func retrieveDoc(ctx *gin.Context) {
 
 	repl := engine.RetrieveDoc(newCtx, rr.RetreiveTerms)
 	replLen := len(repl)
+	if rr.Offset == 0 && rr.Limit == 0 {
+		rr.Limit = 10
+	}
 	end := rr.Offset + rr.Limit
 	if replLen >= end {
 		repl = repl[:end]
