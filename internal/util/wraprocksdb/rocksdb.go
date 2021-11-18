@@ -1,5 +1,6 @@
 package wraprocksdb
 
+/*
 import (
 	"errors"
 	"search_engine/internal/util/log"
@@ -59,4 +60,4 @@ func (rs *wrapRocksdb) Delete(k []byte) error {
 func (rs *wrapRocksdb) Close() error {
 	rs.DB.Close()
 	return nil
-}
+}*/

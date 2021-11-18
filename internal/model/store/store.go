@@ -4,7 +4,6 @@ import (
 	"errors"
 	"search_engine/internal/util/log"
 	"search_engine/internal/util/wrapredis"
-	"search_engine/internal/util/wraprocksdb"
 )
 
 type Store interface {
@@ -16,8 +15,8 @@ type Store interface {
 
 func StoreFactory(storeType string, path string, host string, port string, password string, index int, timeout int) (Store, error) {
 	switch storeType {
-	case "rocksdb":
-		return wraprocksdb.NewRocksdb(path)
+	//case "rocksdb":
+	//	return wraprocksdb.NewRocksdb(path)
 	case "pika":
 		return wrapredis.NewRedis(host, port, password, index, timeout)
 		//case "fileSystem":
