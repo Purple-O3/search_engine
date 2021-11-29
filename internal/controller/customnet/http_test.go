@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"search_engine/internal/service/engine"
 	"search_engine/internal/service/objs"
+	"search_engine/internal/util/bloomfilter"
 	"search_engine/internal/util/log"
 	"testing"
 	"time"
@@ -52,6 +53,7 @@ func TestAll(t *testing.T) {
 	engine.CloseEg()
 	log.CloseLogger()
 	cn.Shutdown()
+	bloomfilter.DeleteBloomFile(bloomfilterStorePath)
 }
 
 /*

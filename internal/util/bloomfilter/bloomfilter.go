@@ -3,6 +3,7 @@ package bloomfilter
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"hash"
 	"hash/fnv"
 	"io"
@@ -123,6 +124,18 @@ func inspectFileExist(storePath string) error {
 	return nil
 }
 
+func DeleteBloomFile(storePath string) error {
+	_, err := os.Stat(storePath)
+	if os.IsNotExist(err) {
+		return nil
+	}
+	err = os.Remove(storePath)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (bf *BloomFilter) Save2File() error {
 	file, err := os.OpenFile(bf.storePath, os.O_WRONLY|os.O_TRUNC, 0666)
 	if err != nil {
@@ -169,7 +182,8 @@ func (bf *BloomFilter) loadFromFile() error {
 			}
 			if key == "size" {
 				if value != bf.size {
-					return errors.New("file size not equal bitmap size")
+					errStr := fmt.Sprintf("file size:%d not equal bitmap size:%d", value, bf.size)
+					return errors.New(errStr)
 				}
 			}
 		} else {

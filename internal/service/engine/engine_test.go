@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"math/rand"
 	"search_engine/internal/service/objs"
+	"search_engine/internal/util/bloomfilter"
 	"search_engine/internal/util/log"
 	"testing"
 	"time"
@@ -28,7 +29,8 @@ func TestAll(t *testing.T) {
 	dbTimeout := 30
 	bloomfilterMiscalRate := 0.00001
 	var bloomfilterAddSize uint64 = 100000000
-	egn := newEngine(analyzerStopWordPath, dbPath, dbHost, dbPort, dbAuth, dbIndex, dbTimeout, bloomfilterMiscalRate, bloomfilterAddSize, "../../../data/bloomfilter")
+	bloomfilterStorePath := "../../../data/bloomfilter"
+	egn := newEngine(analyzerStopWordPath, dbPath, dbHost, dbPort, dbAuth, dbIndex, dbTimeout, bloomfilterMiscalRate, bloomfilterAddSize, bloomfilterStorePath)
 	defer egn.close()
 
 	var docid uint64 = 0
@@ -66,6 +68,7 @@ func TestAll(t *testing.T) {
 	egn.delDoc(3)
 	ret = egn.retrieveDoc(ctx, retreiveTerms)
 	t.Log(ret)
+	bloomfilter.DeleteBloomFile(bloomfilterStorePath)
 }
 
 /*
