@@ -61,7 +61,7 @@ integration-test-job:
   script:
     - cd cmd
     - ./search_engine &
-    - newman run test/searchEngine.json
+    - newman run ../test/searchEngine.json
 #deploy-job:      # This job runs in the deploy stage.
 #  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
 #  script:
