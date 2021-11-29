@@ -2,12 +2,9 @@ package customnet
 
 import (
 	"encoding/json"
-	"os"
-	"os/signal"
 	"search_engine/internal/service/engine"
 	"search_engine/internal/service/objs"
 	"search_engine/internal/util/log"
-	"syscall"
 	"testing"
 	"time"
 )
@@ -49,9 +46,9 @@ func TestAll(t *testing.T) {
 	ip, port := "", "7788"
 	cn := NetFactory("http")
 	cn.StartNet(ip, port)
-	c := make(chan os.Signal, 1)
+	/*c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
-	<-c
+	<-c*/
 	engine.CloseEg()
 	log.CloseLogger()
 	cn.Shutdown()
