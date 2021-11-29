@@ -3,16 +3,17 @@ package rank
 import (
 	"search_engine/internal/service/objs"
 	"testing"
+	"time"
 )
 
 func TestAll(t *testing.T) {
 	ranker := RankerFactory()
 	replUniqInter := make(objs.RecallPostingList, 0)
-	reposting := objs.RecallPosting{objs.Posting{Term: "银河", Docid: 1, TermFreq: 1, Offset: []int{0}}, objs.Doc{Body: "", Title: "五二班", Price: 5.200000}}
+	reposting := objs.RecallPosting{objs.Posting{FieldName: "Modified", Term: "银河", Docid: 1}, objs.Doc{Ident: "88.199.1/aaa.def", Data: objs.Data{Modified: "北京市石景山区", Saled: "乌鲁木齐", CreatedAt: time.Now().Add(time.Hour * 24), Num: 15}}}
 	replUniqInter = append(replUniqInter, reposting)
-	reposting = objs.RecallPosting{objs.Posting{Term: "银河", Docid: 2, TermFreq: 1, Offset: []int{0}}, objs.Doc{Body: "", Title: "五三班", Price: 5.300000}}
+	reposting = objs.RecallPosting{objs.Posting{FieldName: "Modified", Term: "银河", Docid: 2}, objs.Doc{Ident: "88.199.1/bbb.def", Data: objs.Data{Modified: "北京市丰台区", Saled: "辽宁", CreatedAt: time.Now().Add(time.Second * 1), Num: 13}}}
 	replUniqInter = append(replUniqInter, reposting)
-	reposting = objs.RecallPosting{objs.Posting{Term: "银河", Docid: 4, TermFreq: 1, Offset: []int{0}}, objs.Doc{Body: "", Title: "五三班", Price: 5.300000}}
+	reposting = objs.RecallPosting{objs.Posting{FieldName: "Modified", Term: "银河", Docid: 4}, objs.Doc{Ident: "88.199.1/ccc.def", Data: objs.Data{Modified: "北京市宣武区", Saled: "大连", CreatedAt: time.Now().Add(time.Hour * 6), Num: 10}}}
 	replUniqInter = append(replUniqInter, reposting)
 	out := ranker.Rank(replUniqInter)
 	t.Log(out)
