@@ -26,7 +26,7 @@ format-job:
   tags:
     - golang
   services:
-    - name: pika:latest
+    - name: pikadb/pika:latest
   script:
     - goimports -d .
     - test -z "$(goimports -d .)"
@@ -53,7 +53,7 @@ build-job:       # This job runs in the build stage, which runs first.
 integration-test-job:
   stage: integration-test
   services:
-    - name: pika:latest
+    - name: pikadb/pika:latest
   image:
     name: node:latest
   before_script:
