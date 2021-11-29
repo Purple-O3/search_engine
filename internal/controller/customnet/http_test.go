@@ -29,7 +29,7 @@ func TestGetAddDocArgs(t *testing.T) {
 
 func TestGetRetriveArgs(t *testing.T) {
 	var rr objs.RetreiveReq
-	rr.RetreiveTerms = []objs.RetreiveTerm{{"Modified", "北京", objs.Eq, objs.Union}, {"Ident", "88.199.1/fff.def", objs.Eq, objs.Union}, {"Num", 12, objs.Gt, objs.Filter}, {"CreatedAt", "2021-11-03T15:14:05.126975+08:00", objs.Lt, objs.Filter}}
+	rr.RetreiveTerms = []objs.RetreiveTerm{{FieldName: "Modified", Term: "北京", TermCompareType: objs.Eq, Operator: objs.Union}, {FieldName: "Ident", Term: "88.199.1/fff.def", TermCompareType: objs.Eq, Operator: objs.Union}, {FieldName: "Num", Term: 12, TermCompareType: objs.Gt, Operator: objs.Filter}, {FieldName: "CreatedAt", Term: "2021-11-03T15:14:05.126975+08:00", TermCompareType: objs.Lt, Operator: objs.Filter}}
 	rrByte, _ := json.Marshal(&rr)
 	t.Log(string(rrByte))
 }

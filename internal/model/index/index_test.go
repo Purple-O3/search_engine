@@ -31,10 +31,10 @@ func TestAll(t *testing.T) {
 
 	invertedIndex := NewInvertedIndex(s)
 	var docid uint64 = 0
-	posting := objs.Posting{"context", "唐时", docid}
+	posting := objs.Posting{FieldName: "context", Term: "唐时", Docid: docid}
 	invertedIndex.Set(posting.FieldName+"_"+posting.Term, posting)
 	docid = 1
-	posting = objs.Posting{"context", "明月", docid}
+	posting = objs.Posting{FieldName: "context", Term: "明月", Docid: docid}
 	invertedIndex.Set(posting.FieldName+"_"+posting.Term, posting)
 	pl, _ := invertedIndex.Get(posting.FieldName + "_" + posting.Term)
 	t.Log(pl)

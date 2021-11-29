@@ -15,9 +15,7 @@ require (
 	github.com/yanyiwu/gojieba v1.1.2
 	go.uber.org/automaxprocs v1.4.0
 	go.uber.org/zap v1.16.0
-	golang.org/x/mod v0.4.2 // indirect
-	golang.org/x/sys v0.0.0-20210316164454-77fc1eacc6aa // indirect
-	golang.org/x/tools v0.1.0 // indirect
+	golang.org/x/tools v0.1.7 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )

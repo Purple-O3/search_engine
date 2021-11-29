@@ -53,7 +53,7 @@ func TestAll(t *testing.T) {
 	doc = objs.Doc{Ident: "88.199.1/fff.def", Data: objs.Data{Modified: "北京市首都机场", Saled: "成都", CreatedAt: time.Now().Add(time.Hour * -2), Num: 5}}
 	egn.addDoc(ctx, doc, docid)
 
-	retreiveTerms := []objs.RetreiveTerm{{"Modified", "北京", objs.Eq, objs.Union}, {"Num", 6, objs.Gt, objs.Filter}, {"CreatedAt", time.Now(), objs.Gt, objs.Filter}}
+	retreiveTerms := []objs.RetreiveTerm{{FieldName: "Modified", Term: "北京", TermCompareType: objs.Eq, Operator: objs.Union}, {FieldName: "Num", Term: 6, TermCompareType: objs.Gt, Operator: objs.Filter}, {FieldName: "CreatedAt", Term: time.Now(), TermCompareType: objs.Gt, Operator: objs.Filter}}
 	retreiveByte, _ := json.Marshal(retreiveTerms)
 	_ = json.Unmarshal(retreiveByte, &retreiveTerms)
 	ret := egn.retrieveDoc(ctx, retreiveTerms)

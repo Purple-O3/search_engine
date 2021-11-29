@@ -93,7 +93,7 @@ func ConvStruct2Map(s interface{}) (map[string]objs.FieldInfo, error) {
 			fieldName := v.Type().Field(i).Name
 			fieldValue := fmt.Sprintf("%v", v.Field(i).Interface())
 			fieldType := v.Type().Field(i).Tag.Get("search_type")
-			fieldMap[fieldName] = objs.FieldInfo{fieldType, fieldValue}
+			fieldMap[fieldName] = objs.FieldInfo{Type: fieldType, Value: fieldValue}
 		}
 	}
 	return fieldMap, nil
