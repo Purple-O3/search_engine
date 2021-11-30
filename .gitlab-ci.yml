@@ -39,7 +39,6 @@ build-job:       # This job runs in the build stage, which runs first.
     - golang
   script:
     - echo "Compiling the code..."
-    - cp /go/pkg/mod/github.com/yanyiwu/gojieba@v1.1.2/dict/ data/dict
     - cd cmd
     - go build  -race -ldflags "-extldflags '-static'" -o search_engine  main.go
     - echo "Compile complete."
