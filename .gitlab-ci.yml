@@ -44,7 +44,6 @@ build-job:       # This job runs in the build stage, which runs first.
     - echo "Compile complete."
   artifacts:
     paths:
-      - search_engine
       - cmd
       - configs
       - data
@@ -60,7 +59,7 @@ integration-test-job:
     - npm install -g newman
   script:
     - mkdir -p /go/pkg/mod/github.com/yanyiwu/gojieba@v1.1.2
-    - ln -s data/dict/ /go/pkg/mod/github.com/yanyiwu/gojieba@v1.1.2/dict
+    - ln -s ./data/dict/ /go/pkg/mod/github.com/yanyiwu/gojieba@v1.1.2/dict
     - sleep 5m
     - cd cmd
     - ./search_engine &
