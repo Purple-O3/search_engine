@@ -7,6 +7,7 @@ import (
 	"search_engine/internal/service/objs"
 	"strings"
 	"time"
+	"unsafe"
 )
 
 func TimeCost() func() time.Duration {
@@ -17,24 +18,24 @@ func TimeCost() func() time.Duration {
 }
 
 func Str2Bytes(s string) []byte {
-	/*stringHeader := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	stringHeader := (*reflect.StringHeader)(unsafe.Pointer(&s))
 	bh := reflect.SliceHeader{
 		Data: stringHeader.Data,
 		Len:  stringHeader.Len,
 		Cap:  stringHeader.Len,
 	}
-	return *(*[]byte)(unsafe.Pointer(&bh))*/
-	return []byte(s)
+	return *(*[]byte)(unsafe.Pointer(&bh))
+	//return []byte(s)
 }
 
 func Bytes2Str(b []byte) string {
-	/*sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&b))
 	sh := reflect.StringHeader{
 		Data: sliceHeader.Data,
 		Len:  sliceHeader.Len,
 	}
-	return *(*string)(unsafe.Pointer(&sh))*/
-	return string(b)
+	return *(*string)(unsafe.Pointer(&sh))
+	//return string(b)
 }
 
 func Camel2SnakeString(s string) string {
