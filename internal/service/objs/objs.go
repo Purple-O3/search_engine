@@ -1,5 +1,7 @@
 package objs
 
+import "time"
+
 //import "time"
 
 type Posting struct {
@@ -18,12 +20,12 @@ type Data struct {
 	Projectid string
 	Modified  string
 	Saled     string
-	//Num       int
-	//CreatedAt time.Time `search_type:"keyword"`
+	Num       int
+	CreatedAt time.Time `search_type:"keyword"`
 }
 
 type Doc struct {
-	Ident     string `search_type:"keyword"`
+	Ident string `search_type:"keyword"`
 	Data
 }
 
