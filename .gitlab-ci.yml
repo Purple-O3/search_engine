@@ -1,13 +1,3 @@
-# This file is a template, and might need editing before it works on your project.
-# This is a sample GitLab CI/CD configuration file that should run without any modifications.
-# It demonstrates a basic 3 stage CI/CD pipeline. Instead of real tests or scripts,
-# it uses echo commands to simulate the pipeline execution.
-#
-# A pipeline is composed of independent jobs that run scripts, grouped into stages.
-# Stages run in sequential order, but jobs within stages run in parallel.
-#
-# For more information, see: https://docs.gitlab.com/ee/ci/yaml/README.html#stages
-
 image: golang:latest
 
 before_script:
@@ -15,7 +5,7 @@ before_script:
   - go get golang.org/x/tools/cmd/goimports
 #  - apt-get update && apt-get install -y curl 
 
-stages:          # List of stages for jobs, and their order of execution
+stages:
   - test
   - build
   - integration-test
@@ -33,7 +23,7 @@ format-job:
     - go vet $(go list ./... | grep -v /vendor/)
     - go test -short -race $(go list ./... | grep -v /vendor/)
 
-build-job:       # This job runs in the build stage, which runs first.
+build-job:
   stage: build
   tags:
     - golang
@@ -59,10 +49,11 @@ integration-test-job:
     - npm install -g newman
   script:
     - mkdir -p /go/pkg/mod/github.com/yanyiwu/gojieba@v1.1.2/dict
-    - cp ./data/dict/* /go/pkg/mod/github.com/yanyiwu/gojieba@v1.1.2/dict/
+    - cp ./data/jibadict/* /go/pkg/mod/github.com/yanyiwu/gojieba@v1.1.2/dict/
     - cd cmd
     - ./search_engine &
     - newman run ../test/searchEngine.json
+
 #deploy-job:      # This job runs in the deploy stage.
 #  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
 #  script:

@@ -7,6 +7,26 @@
 	"item": [
 		{
 			"name": "127.0.0.1:7788/add_doc",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json()",
+							"pm.test(\"Status code is 200\", function(){",
+							"    pm.response.to.have.status(200);",
+							"})",
+							"pm.test(\"return code is 0\", function(){",
+							"    pm.expect(jsonData.code).to.eql(0);",
+							"})",
+							"pm.test(\"register ok\", function(){",
+							"    pm.expect(jsonData.message).to.eql(\"ok\");",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -37,6 +57,26 @@
 		},
 		{
 			"name": "127.0.0.1:7788/retrieve",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json()",
+							"pm.test(\"Status code is 200\", function(){",
+							"    pm.response.to.have.status(200);",
+							"})",
+							"pm.test(\"return code is 0\", function(){",
+							"    pm.expect(jsonData.code).to.eql(0);",
+							"})",
+							"pm.test(\"register ok\", function(){",
+							"    pm.expect(jsonData.message).to.eql(\"ok\");",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
