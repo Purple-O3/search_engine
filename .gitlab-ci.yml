@@ -33,7 +33,7 @@ build-job:
   script:
     - echo "Compiling the code..."
     - cd cmd
-    - go build  -race -ldflags "-extldflags '-static'" -o search_engine  main.go
+    - go build -race -ldflags "-extldflags '-static'" -o search_engine main.go
     - echo "Compile complete."
   artifacts:
     paths:
