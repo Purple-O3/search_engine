@@ -90,13 +90,13 @@ func (pi *PositiveIndex) flushDB() {
 		}
 	}(tools.TimeCost())
 
-	pi.rwlock.RLock()
+	pi.rwlock.Lock()
 	dict := pi.docDict[pi.use]
 	free := 1 - pi.use
 	pi.docDict[free] = make(map[string]string)
 	pi.docDict[pi.use] = nil
 	pi.use = free
-	pi.rwlock.RUnlock()
+	pi.rwlock.Unlock()
 	for k, v := range dict {
 		key := tools.Str2Bytes(k)
 		value := tools.Str2Bytes(v)

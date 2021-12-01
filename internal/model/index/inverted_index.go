@@ -99,13 +99,13 @@ func (ii *InvertedIndex) flushDB() {
 		}
 	}(tools.TimeCost())
 
-	ii.rwlock.RLock()
+	ii.rwlock.Lock()
 	dict := ii.termDict[ii.use]
 	free := 1 - ii.use
 	ii.termDict[free] = make(map[string]objs.PostingList)
 	ii.termDict[ii.use] = nil
 	ii.use = free
-	ii.rwlock.RUnlock()
+	ii.rwlock.Unlock()
 	for k, v := range dict {
 		key := tools.Str2Bytes(k)
 		valueStored, err := ii.db.Get(key)
