@@ -22,8 +22,8 @@ func TestAll(t *testing.T) {
 
 	analyzerStopWordPath := "../../../data/stop_word.txt"
 	dbPath := "../../../data/db/engine.db"
-	dbHost := "127.0.0.1"
-	dbPort := "4379"
+	dbHost := "${DBHOST||localhost}"
+	dbPort := "9221"
 	dbAuth := ""
 	dbIndex := 0
 	dbTimeout := 30
@@ -75,8 +75,8 @@ func TestAll(t *testing.T) {
 func TestCalInter(t *testing.T) {
 	analyzerStopWordPath := "../../../data/stop_word.txt"
 	dbPath := "../../../data/db/engine.db"
-	dbHost := "127.0.0.1"
-	dbPort := "4379"
+	dbHost := "${DBHOST||localhost}"
+	dbPort := "9221"
 	dbAuth := ""
 	dbIndex := 0
 	dbTimeout := 30
@@ -119,8 +119,8 @@ func TestCalInter(t *testing.T) {
 func TestWrap(t *testing.T) {
 	analyzerStopWordPath := "../../../data/stop_word.txt"
 	dbPath := "../../../data/db/engine.db"
-	dbHost := "127.0.0.1"
-	dbPort := "4379"
+	dbHost := "${DBHOST||localhost}"
+	dbPort := "9221"
 	dbAuth := ""
 	dbIndex := 0
 	dbTimeout := 30
@@ -157,8 +157,8 @@ func TestWrap(t *testing.T) {
 func TestAll2(t *testing.T) {
 	analyzerStopWordPath := "../../../data/stop_word.txt"
 	dbPath := "../../../data/db/engine.db"
-	dbHost := "127.0.0.1"
-	dbPort := "4379"
+	dbHost := "${DBHOST||localhost}"
+	dbPort := "9221"
 	dbAuth := ""
 	dbIndex := 0
 	dbTimeout := 30

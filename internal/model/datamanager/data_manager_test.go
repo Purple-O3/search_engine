@@ -18,8 +18,8 @@ func TestAll(t *testing.T) {
 	log.InitLogger(level, filePath, maxSize, maxBackups, maxAge, compress)
 
 	dbPath := "../../../data/db/engine.db"
-	dbHost := "127.0.0.1"
-	dbPort := "4379"
+	dbHost := "${DBHOST||localhost}"
+	dbPort := "9221"
 	dbAuth := ""
 	dbIndex := 0
 	dbTimeout := 30

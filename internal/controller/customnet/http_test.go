@@ -35,8 +35,8 @@ func TestGetRetriveArgs(t *testing.T) {
 func TestAll(t *testing.T) {
 	analyzerStopWordPath := "../../../data/stop_word.txt"
 	dbPath := "../../../data/db/engine.db"
-	dbHost := "127.0.0.1"
-	dbPort := "4379"
+	dbHost := "${DBHOST||localhost}"
+	dbPort := "9221"
 	dbAuth := ""
 	dbIndex := 0
 	dbTimeout := 30

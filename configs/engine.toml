@@ -20,7 +20,7 @@ store_path = "../data/bloomfilter"
 
 [db]
 path = "../data/db/engine.db"
-host = "192.168.3.4"
+host = "${DBHOST||localhost}"
 port = "9221"
 password = ""
 index = 0

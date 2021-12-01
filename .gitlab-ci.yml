@@ -17,6 +17,9 @@ format-job:
     - golang
   services:
     - name: pikadb/pika:latest
+      alias: pika
+  variables:
+    SQL_HOST: pika
   script:
     - goimports -d .
     - test -z "$(goimports -d .)"
@@ -43,6 +46,9 @@ integration-test-job:
   stage: integration-test
   services:
     - name: pikadb/pika:latest
+      alias: pika
+  variables:
+    SQL_HOST: pika
   image:
     name: node:latest
   before_script:
