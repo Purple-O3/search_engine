@@ -18,6 +18,14 @@ type Doc struct {
 	Data
 }
 
+func TestBytesStr(t *testing.T) {
+	str := "hello world"
+	b := Str2Bytes(str)
+	t.Log(b)
+	str2 := Bytes2Str(b)
+	t.Log(str2)
+}
+
 func TestConvStruct2Map(t *testing.T) {
 	doc := Doc{Ident: "88.199.1/abc.def", Data: Data{Modified: "北京市丰台区", Saled: "北京市海淀区", CreatedAt: time.Now()}}
 	objMap, err := ConvStruct2Map(doc)
