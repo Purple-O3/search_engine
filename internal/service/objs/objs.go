@@ -1,6 +1,6 @@
 package objs
 
-import "time"
+//import "time"
 
 type Posting struct {
 	FieldName string `json:"-"`
@@ -14,16 +14,16 @@ type Postings []Posting    //not same term's posting
 type PostingList []Posting //same term's posting
 
 type Data struct {
+	Companyid string
+	Projectid string
 	Modified  string
 	Saled     string
-	Num       int
-	CreatedAt time.Time `search_type:"keyword"`
+	//Num       int
+	//CreatedAt time.Time `search_type:"keyword"`
 }
 
 type Doc struct {
 	Ident     string `search_type:"keyword"`
-	Companyid int
-	Projectid int
 	Data
 }
 
