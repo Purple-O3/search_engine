@@ -1,4 +1,4 @@
-package wrapmmap
+package mmapwrapper
 
 /*
 func MRead(fileName string, offset int64, length int64) string {

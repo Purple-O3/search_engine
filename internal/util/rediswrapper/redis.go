@@ -1,4 +1,4 @@
-package wrapredis
+package rediswrapper
 
 import (
 	"errors"
@@ -10,12 +10,12 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-type wrapRedis struct {
+type redisWrapper struct {
 	connPool *redis.Pool
 }
 
-func NewRedis(host string, port string, password string, index int, timeout int) (*wrapRedis, error) {
-	rd := new(wrapRedis)
+func NewRedis(host string, port string, password string, index int, timeout int) (*redisWrapper, error) {
+	rd := new(redisWrapper)
 	pool := newPool(host, port, password, index, timeout)
 	rd.connPool = pool
 	return rd, nil
@@ -40,7 +40,7 @@ func newPool(host string, port string, password string, index int, timeout int) 
 	}
 }
 
-func (rd *wrapRedis) Set(k []byte, v []byte) error {
+func (rd *redisWrapper) Set(k []byte, v []byte) error {
 	defer func(cost func() time.Duration) {
 		log.Warnf("trackid:%v, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
@@ -52,7 +52,7 @@ func (rd *wrapRedis) Set(k []byte, v []byte) error {
 	return err
 }
 
-func (rd *wrapRedis) Get(k []byte) ([]byte, error) {
+func (rd *redisWrapper) Get(k []byte) ([]byte, error) {
 	defer func(cost func() time.Duration) {
 		log.Warnf("trackid:%v, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
@@ -67,14 +67,14 @@ func (rd *wrapRedis) Get(k []byte) ([]byte, error) {
 	return v, err
 }
 
-func (rd *wrapRedis) Delete(k []byte) error {
+func (rd *redisWrapper) Delete(k []byte) error {
 	conn := rd.connPool.Get()
 	defer conn.Close()
 	_, err := conn.Do("Del", k)
 	return err
 }
 
-func (rd *wrapRedis) Close() error {
+func (rd *redisWrapper) Close() error {
 	rd.connPool.Close()
 	return nil
 }

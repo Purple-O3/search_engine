@@ -11,14 +11,6 @@ import (
 )
 
 func TestGetAddDocArgs(t *testing.T) {
-	level := "debug"
-	filePath := "../../../logs/engine.log"
-	maxSize := 128
-	maxBackups := 100
-	maxAge := 60
-	compress := true
-	log.InitLogger(level, filePath, maxSize, maxBackups, maxAge, compress)
-
 	var docReq objs.Doc
 	docReq = objs.Doc{Ident: "88.199.1/fff.def", Data: objs.Data{Modified: "北京市首都机场", Saled: "成都", CreatedAt: time.Now(), Num: 5}}
 	docByte, _ := json.Marshal(&docReq)

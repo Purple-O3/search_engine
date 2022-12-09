@@ -1,4 +1,4 @@
-package wraprocksdb
+package rocksdbwrapper
 
 /*
 import (
@@ -10,14 +10,14 @@ import (
 	"github.com/tecbot/gorocksdb"
 )
 
-type wrapRocksdb struct {
+type rocksdbWrapper struct {
 	DB *gorocksdb.DB
 	RO *gorocksdb.ReadOptions
 	WO *gorocksdb.WriteOptions
 }
 
-func NewRocksdb(path string) (*wrapRocksdb, error) {
-	rs := new(wrapRocksdb)
+func NewRocksdb(path string) (*rocksdbWrapper, error) {
+	rs := new(rocksdbWrapper)
 	bbto := gorocksdb.NewDefaultBlockBasedTableOptions()
 	bbto.SetBlockCache(gorocksdb.NewLRUCache(3 << 30))
 	opts := gorocksdb.NewDefaultOptions()
@@ -30,7 +30,7 @@ func NewRocksdb(path string) (*wrapRocksdb, error) {
 	return rs, err
 }
 
-func (rs *wrapRocksdb) Set(k []byte, v []byte) error {
+func (rs *rocksdbWrapper) Set(k []byte, v []byte) error {
 	defer func(cost func() time.Duration) {
 		log.Debugf("trackid:%v, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
@@ -39,7 +39,7 @@ func (rs *wrapRocksdb) Set(k []byte, v []byte) error {
 	return rs.DB.Put(rs.WO, k, v)
 }
 
-func (rs *wrapRocksdb) Get(k []byte) ([]byte, error) {
+func (rs *rocksdbWrapper) Get(k []byte) ([]byte, error) {
 	defer func(cost func() time.Duration) {
 		log.Debugf("trackid:%v, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
@@ -53,11 +53,11 @@ func (rs *wrapRocksdb) Get(k []byte) ([]byte, error) {
 	return v, err
 }
 
-func (rs *wrapRocksdb) Delete(k []byte) error {
+func (rs *rocksdbWrapper) Delete(k []byte) error {
 	return rs.DB.Delete(rs.WO, k)
 }
 
-func (rs *wrapRocksdb) Close() error {
+func (rs *rocksdbWrapper) Close() error {
 	rs.DB.Close()
 	return nil
 }*/

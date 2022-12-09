@@ -1,19 +1,10 @@
 package store
 
 import (
-	"search_engine/internal/util/log"
 	"testing"
 )
 
 func TestAll(t *testing.T) {
-	level := "debug"
-	filePath := "../../../logs/engine.log"
-	maxSize := 128
-	maxBackups := 100
-	maxAge := 60
-	compress := true
-	log.InitLogger(level, filePath, maxSize, maxBackups, maxAge, compress)
-
 	path := "../../../data/db/engine.db"
 	host := "192.168.3.4"
 	port := "9221"

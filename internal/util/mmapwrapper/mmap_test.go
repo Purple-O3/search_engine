@@ -1,4 +1,4 @@
-package wrapmmap
+package mmapwrapper
 
 import (
 	"testing"

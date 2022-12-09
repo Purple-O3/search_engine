@@ -14,7 +14,7 @@ import (
 )
 
 type Net interface {
-	StartNet(ip string, port string)
+	StartNet(ip string, port int)
 	Shutdown()
 }
 
@@ -36,13 +36,7 @@ func newCustomHttp() *customHttp {
 	return new(customHttp)
 }
 
-func (ch *customHttp) StartNet(ip string, port string) {
-	/*router := gin.Default()
-	equals
-	router := gin.New()
-	router.Use(gin.Logger())
-	router.Use(gin.Recovery())*/
-
+func (ch *customHttp) StartNet(ip string, port int) {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
 	router.Use(gin.Recovery())
@@ -54,7 +48,7 @@ func (ch *customHttp) StartNet(ip string, port string) {
 	//pprof.Register(router)
 
 	srv := &http.Server{
-		Addr:    ip + ":" + port,
+		Addr:    ip + ":" + strconv.Itoa(port),
 		Handler: router,
 	}
 	ch.svr = srv
@@ -66,8 +60,7 @@ func (ch *customHttp) StartNet(ip string, port string) {
 }
 
 func (ch *customHttp) Shutdown() {
-	ctx := context.Background()
-	ch.svr.Shutdown(ctx)
+	ch.svr.Shutdown(context.Background())
 }
 
 func addDoc(ctx *gin.Context) {

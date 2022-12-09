@@ -3,7 +3,7 @@ package store
 import (
 	"errors"
 	"search_engine/internal/util/log"
-	"search_engine/internal/util/wrapredis"
+	"search_engine/internal/util/rediswrapper"
 )
 
 type Store interface {
@@ -16,9 +16,9 @@ type Store interface {
 func StoreFactory(storeType string, path string, host string, port string, password string, index int, timeout int) (Store, error) {
 	switch storeType {
 	//case "rocksdb":
-	//	return wraprocksdb.NewRocksdb(path)
+	//	return rocksdbwrapper.NewRocksdb(path)
 	case "pika":
-		return wrapredis.NewRedis(host, port, password, index, timeout)
+		return rediswrapper.NewRedis(host, port, password, index, timeout)
 		//case "fileSystem":
 		//		return NewFileSystem(dbPath)
 	default:
