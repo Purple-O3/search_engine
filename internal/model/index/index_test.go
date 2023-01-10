@@ -2,19 +2,14 @@ package index
 
 import (
 	"search_engine/internal/model/store"
-	"search_engine/internal/service/objs"
+	"search_engine/internal/objs"
 	"strconv"
 	"testing"
 )
 
 func TestAll(t *testing.T) {
-	path := "../../../data/db/engine.db"
-	host := "192.168.3.4"
-	port := "9221"
-	auth := ""
-	index := 0
-	timeout := 30
-	s, err := store.StoreFactory("pika", path, host, port, auth, index, timeout)
+	config := objs.DBConfig{Type: "pika", Path: "../../../data/db/engine.db", Host: "192.168.3.4", Index: 0, Timeout: 30}
+	s, err := store.StoreFactory(config)
 	if err != nil {
 		t.Log("new s error", err)
 		return

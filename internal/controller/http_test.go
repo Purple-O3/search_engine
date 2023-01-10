@@ -1,9 +1,9 @@
-package customnet
+package controller
 
 import (
 	"encoding/json"
-	"search_engine/internal/service/engine"
-	"search_engine/internal/service/objs"
+	"search_engine/internal/objs"
+	enginepack "search_engine/internal/service/engine"
 	"search_engine/internal/util/bloomfilter"
 	"search_engine/internal/util/log"
 	"testing"
@@ -25,34 +25,31 @@ func TestGetRetriveArgs(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
-	analyzerStopWordPath := "../../../data/stop_word.txt"
-	dbPath := "../../../data/db/engine.db"
-	dbHost := "${DBHOST||localhost}"
-	dbPort := "9221"
-	dbAuth := ""
-	dbIndex := 0
-	dbTimeout := 30
-	bloomfilterMiscalRate := 0.00001
-	var bloomfilterAddSize uint64 = 100000000
-	bloomfilterStorePath := "../../../data/bloomfilter"
-	engine.NewEg(analyzerStopWordPath, dbPath, dbHost, dbPort, dbAuth, dbIndex, dbTimeout, bloomfilterMiscalRate, bloomfilterAddSize, bloomfilterStorePath)
-	ip, port := "", "7788"
-	cn := NetFactory("http")
-	cn.StartNet(ip, port)
-	/*c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
-	<-c*/
-	engine.CloseEg()
+	config := objs.Config{
+		objs.ServerConfig{IP: "127.0.0.1", Port: 7788, Debug: false, ReadTimeout: 1000, WriteTimeout: 1000, IdleTimeout: 1000},
+		objs.LogConfig{},
+		objs.AnalyzerConfig{StopWordPath: "../../../data/stop_word.txt"},
+		objs.BloomfilterConfig{MiscalRate: 0.00001, AddSize: 100000000, StorePath: "../../../data/bloomfilter"},
+		objs.DBConfig{Type: "pika", Path: "../../../data/db/engine.db", Host: "${DBHOST||localhost}", Port: 9221, Password: "", Index: 0, Timeout: 30},
+	}
+
+	enginepack.NewWrapEngine(config.Analyzer, config.DB, config.Bloomfilter)
+	if err := StartNet(config.Server, closeFunc); err != nil {
+		panic(err)
+	}
+	bloomfilter.DeleteBloomFile(config.Bloomfilter.StorePath)
+}
+
+func closeFunc() {
+	enginepack.CloseWrapEngine()
 	log.CloseLogger()
-	cn.Shutdown()
-	bloomfilter.DeleteBloomFile(bloomfilterStorePath)
 }
 
 /*
-GET 127.0.0.1:7788/del_doc?docid=0
-GET 127.0.0.1:7788/doc_isdel?docid=3
-POST 127.0.0.1:7788/add_doc
+GET 127.0.0.1:7788/api/v1/del_doc?docid=0
+GET 127.0.0.1:7788/api/v1/doc_isdel?docid=3
+POST 127.0.0.1:7788/api/v1/add_doc
 {"Ident":"88.199.1/bbb.def","Modified":"北京市首都机场","Saled":"成都","Num":13,"CreatedAt":"2021-11-02T16:42:21.199502+08:00"}
-POST 127.0.0.1:7788/retrieve
+POST 127.0.0.1:7788/api/v1/retrieve_doc
 {"RetreiveTerms":[{"FieldName":"Modified","Term":"北京","TermCompareType":1,"Operator":"must"},{"FieldName":"Num","Term":12,"TermCompareType":16,"Operator":"filter"}],"Offset":0,"Limit":10}
 */

@@ -1,7 +1,7 @@
 package rank
 
 import (
-	"search_engine/internal/service/objs"
+	"search_engine/internal/objs"
 	"testing"
 	"time"
 )

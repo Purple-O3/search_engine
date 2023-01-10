@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"search_engine/internal/service/objs"
 	"strings"
 	"time"
 	"unsafe"
@@ -18,6 +17,9 @@ func TimeCost() func() time.Duration {
 }
 
 func Str2Bytes(s string) []byte {
+	if s == "" {
+		return []byte{}
+	}
 	return (*[0x7fff0000]byte)(unsafe.Pointer(
 		(*reflect.StringHeader)(unsafe.Pointer(&s)).Data),
 	)[:len(s):len(s)]
@@ -63,7 +65,12 @@ func Snake2CamelString(s string) string {
 	return string(data[:])
 }
 
-func ConvStruct2Map(s interface{}) (map[string]objs.FieldInfo, error) {
+type FieldInfo struct {
+	Type  string
+	Value string
+}
+
+func ConvStruct2Map(s interface{}) (map[string]FieldInfo, error) {
 	v := reflect.ValueOf(s)
 	if v.Kind() == reflect.Ptr {
 		v = v.Elem()
@@ -72,7 +79,7 @@ func ConvStruct2Map(s interface{}) (map[string]objs.FieldInfo, error) {
 		return nil, errors.New("kind is not struct")
 	}
 
-	fieldMap := make(map[string]objs.FieldInfo, 0)
+	fieldMap := make(map[string]FieldInfo, 0)
 	for i := 0; i < v.NumField(); i++ {
 		if v.Field(i).Kind() == reflect.Struct && v.Type().Field(i).Type.Name() == v.Type().Field(i).Name {
 			if subFieldMap, err := ConvStruct2Map(v.Field(i).Interface()); err == nil {
@@ -84,7 +91,7 @@ func ConvStruct2Map(s interface{}) (map[string]objs.FieldInfo, error) {
 			fieldName := v.Type().Field(i).Name
 			fieldValue := fmt.Sprintf("%v", v.Field(i).Interface())
 			fieldType := v.Type().Field(i).Tag.Get("search_type")
-			fieldMap[fieldName] = objs.FieldInfo{Type: fieldType, Value: fieldValue}
+			fieldMap[fieldName] = FieldInfo{Type: fieldType, Value: fieldValue}
 		}
 	}
 	return fieldMap, nil

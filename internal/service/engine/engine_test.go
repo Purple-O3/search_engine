@@ -1,65 +1,56 @@
-package engine
+package enginepack
 
 import (
-	"context"
 	"encoding/json"
 	"math/rand"
-	"search_engine/internal/service/objs"
+	"search_engine/internal/objs"
 	"search_engine/internal/util/bloomfilter"
 	"testing"
 	"time"
 )
 
 func TestAll(t *testing.T) {
-	analyzerStopWordPath := "../../../data/stop_word.txt"
-	dbPath := "../../../data/db/engine.db"
-	dbHost := "${DBHOST||localhost}"
-	dbPort := "9221"
-	dbAuth := ""
-	dbIndex := 0
-	dbTimeout := 30
-	bloomfilterMiscalRate := 0.00001
-	var bloomfilterAddSize uint64 = 100000000
-	bloomfilterStorePath := "../../../data/bloomfilter"
-	egn := newEngine(analyzerStopWordPath, dbPath, dbHost, dbPort, dbAuth, dbIndex, dbTimeout, bloomfilterMiscalRate, bloomfilterAddSize, bloomfilterStorePath)
+	analyzerConfig := objs.AnalyzerConfig{StopWordPath: "../../../data/stop_word.txt"}
+	dbConfig := objs.DBConfig{Path: "../../../data/db/engine.db", Host: "${DBHOST||localhost}", Port: 9221, Password: "", Index: 0, Timeout: 30}
+	bloomfilterConfig := objs.BloomfilterConfig{MiscalRate: 0.00001, AddSize: 100000000, StorePath: "../../../data/bloomfilter"}
+	egn := newEngine(analyzerConfig, dbConfig, bloomfilterConfig)
 	defer egn.close()
 
 	var docid uint64 = 0
 	doc := objs.Doc{Ident: "88.199.1/aaa.def", Data: objs.Data{Modified: "北京市石景山区", Saled: "乌鲁木齐", CreatedAt: time.Now().Add(time.Hour * 24), Num: 15}}
 	trackid := uint64(rand.Intn(999) + 1)
-	ctx := context.WithValue(context.Background(), "trackid", trackid)
-	egn.addDoc(ctx, doc, docid)
+	egn.addDoc(doc, docid, trackid)
 
 	docid = 1
 	doc = objs.Doc{Ident: "88.199.1/bbb.def", Data: objs.Data{Modified: "北京市丰台区", Saled: "辽宁", CreatedAt: time.Now().Add(time.Second * 1), Num: 13}}
-	egn.addDoc(ctx, doc, docid)
+	egn.addDoc(doc, docid, trackid)
 
 	docid = 2
 	doc = objs.Doc{Ident: "88.199.1/ccc.def", Data: objs.Data{Modified: "北京市宣武区", Saled: "大连", CreatedAt: time.Now().Add(time.Hour * 6), Num: 10}}
-	egn.addDoc(ctx, doc, docid)
+	egn.addDoc(doc, docid, trackid)
 
 	docid = 3
 	doc = objs.Doc{Ident: "88.199.1/eee.def", Data: objs.Data{Modified: "北京市德胜门", Saled: "福建", CreatedAt: time.Now().Add(time.Hour * 2), Num: 6}}
-	egn.addDoc(ctx, doc, docid)
+	egn.addDoc(doc, docid, trackid)
 
 	docid = 4
 	doc = objs.Doc{Ident: "88.199.1/fff.def", Data: objs.Data{Modified: "北京市首都机场", Saled: "成都", CreatedAt: time.Now().Add(time.Hour * -2), Num: 5}}
-	egn.addDoc(ctx, doc, docid)
+	egn.addDoc(doc, docid, trackid)
 
 	retreiveTerms := []objs.RetreiveTerm{{FieldName: "Modified", Term: "北京", TermCompareType: objs.Eq, Operator: objs.Union}, {FieldName: "Num", Term: 6, TermCompareType: objs.Gt, Operator: objs.Filter}, {FieldName: "CreatedAt", Term: time.Now(), TermCompareType: objs.Gt, Operator: objs.Filter}}
 	retreiveByte, _ := json.Marshal(retreiveTerms)
 	_ = json.Unmarshal(retreiveByte, &retreiveTerms)
-	ret := egn.retrieveDoc(ctx, retreiveTerms)
+	ret := egn.retrieveDoc(retreiveTerms, trackid)
 	t.Log(ret)
 
 	egn.delDoc(0)
-	ret = egn.retrieveDoc(ctx, retreiveTerms)
+	ret = egn.retrieveDoc(retreiveTerms, trackid)
 	t.Log(ret)
 
 	egn.delDoc(3)
-	ret = egn.retrieveDoc(ctx, retreiveTerms)
+	ret = egn.retrieveDoc(retreiveTerms, trackid)
 	t.Log(ret)
-	bloomfilter.DeleteBloomFile(bloomfilterStorePath)
+	bloomfilter.DeleteBloomFile(bloomfilterConfig.StorePath)
 }
 
 /*

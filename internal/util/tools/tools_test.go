@@ -20,6 +20,7 @@ type Doc struct {
 
 func TestBytesStr(t *testing.T) {
 	str := "hello world"
+	str = ""
 	b := Str2Bytes(str)
 	t.Log(b)
 	str2 := Bytes2Str(b)

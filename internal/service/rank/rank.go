@@ -1,6 +1,8 @@
 package rank
 
-import "search_engine/internal/service/objs"
+import (
+	"search_engine/internal/objs"
+)
 
 type Ranker interface {
 	Rank(in objs.RecallPostingList) objs.RecallPostingList

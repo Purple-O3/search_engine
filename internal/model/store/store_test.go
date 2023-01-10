@@ -1,17 +1,13 @@
 package store
 
 import (
+	"search_engine/internal/objs"
 	"testing"
 )
 
 func TestAll(t *testing.T) {
-	path := "../../../data/db/engine.db"
-	host := "192.168.3.4"
-	port := "9221"
-	auth := ""
-	index := 0
-	timeout := 30
-	s, err := StoreFactory("pika", path, host, port, auth, index, timeout)
+	config := objs.DBConfig{Type: "pika", Path: "../../../data/db/engine.db", Host: "192.168.3.4", Password: "", Index: 0, Timeout: 30}
+	s, err := StoreFactory(config)
 	if err != nil {
 		t.Log("new s error", err)
 		return
@@ -27,13 +23,8 @@ func TestAll(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	path := "../../../data/db/engine.db"
-	host := "192.168.3.4"
-	port := "9221"
-	auth := ""
-	index := 0
-	timeout := 30
-	s, err := StoreFactory("pika", path, host, port, auth, index, timeout)
+	config := objs.DBConfig{Type: "pika", Path: "../../../data/db/engine.db", Host: "192.168.3.4", Password: "", Index: 0, Timeout: 30}
+	s, err := StoreFactory(config)
 	if err != nil {
 		t.Log("new s error", err)
 		return

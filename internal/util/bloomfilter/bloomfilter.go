@@ -25,15 +25,15 @@ type BloomFilter struct {
 	storePath string
 }
 
-func NewBloomFilter(miscalRate float64, addSize uint64, storePath string) *BloomFilter {
+func NewBloomFilter(config Config) *BloomFilter {
 	bf := new(BloomFilter)
 	bf.used = 0
-	bf.size = uint64(math.Ceil(float64(addSize) * math.Log(miscalRate) / (-0.48))) //m=n*ln(p)/-0.48, math.Log() equals ln()
+	bf.size = uint64(math.Ceil(float64(config.AddSize) * math.Log(config.MiscalRate) / (-0.48))) //m=n*ln(p)/-0.48, math.Log() equals ln()
 	bf.bitmap = make([]byte, bf.size/8+1)
 	bf.hashFn = fnv.New64()
-	bf.hashCnt = uint64(math.Ceil(0.7 * float64(bf.size/addSize))) //k=0.7*m/n
-	bf.storePath = storePath
-	err := inspectFileExist(storePath)
+	bf.hashCnt = uint64(math.Ceil(0.7 * float64(bf.size/config.AddSize))) //k=0.7*m/n
+	bf.storePath = config.StorePath
+	err := inspectFileExist(config.StorePath)
 	if err != nil {
 		panic(err)
 	}
@@ -105,8 +105,8 @@ func (bf *BloomFilter) Size() uint64 {
 	return bf.size
 }
 
-//Pow(x, y float64) float64  // x 的幂函数
-//Exp(x float64) float64 // x的base-e指数函数
+// Pow(x, y float64) float64  // x 的幂函数
+// Exp(x float64) float64 // x的base-e指数函数
 func (bf *BloomFilter) FalsePositiveRate() float64 {
 	return math.Pow((1 - math.Exp(-float64(bf.used*bf.hashCnt)/float64(bf.size))), float64(bf.hashCnt))
 }

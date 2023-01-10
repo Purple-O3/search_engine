@@ -86,7 +86,7 @@ func (pi *PositiveIndex) flushDB() {
 	defer func(cost func() time.Duration) {
 		t := cost().Microseconds()
 		if t > 1000 {
-			log.Warnf("trackid:%v, cost: %.3f ms", 0, float64(t)/1000.0)
+			log.Warnf("cost: %.3f ms", float64(t)/1000.0)
 		}
 	}(tools.TimeCost())
 

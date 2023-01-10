@@ -1,7 +1,7 @@
 package analyzer
 
 import (
-	"search_engine/internal/service/objs"
+	"search_engine/internal/objs"
 	"search_engine/internal/util/hashset"
 	"search_engine/internal/util/tools"
 	"strings"
@@ -11,8 +11,8 @@ type Analyzer interface {
 	Analysis(docid uint64, doc interface{}) objs.Postings
 }
 
-func AnalyzerFactory(stopWordPath string) Analyzer {
-	return newCustomAnalyzer(stopWordPath)
+func AnalyzerFactory(config objs.AnalyzerConfig) Analyzer {
+	return newCustomAnalyzer(config.StopWordPath)
 }
 
 type customAnalyzer struct {

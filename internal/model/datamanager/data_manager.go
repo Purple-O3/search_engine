@@ -1,11 +1,11 @@
 package datamanager
 
 import (
-	"context"
 	"encoding/json"
+	"fmt"
 	"search_engine/internal/model/index"
 	"search_engine/internal/model/store"
-	"search_engine/internal/service/objs"
+	"search_engine/internal/objs"
 	"search_engine/internal/util/log"
 	"search_engine/internal/util/tools"
 	"strconv"
@@ -18,11 +18,10 @@ type Manager struct {
 	db             store.Store
 }
 
-func NewManager(dbPath string, dbHost string, dbPort string, dbPassword string, dbIndex int, dbTimeout int) *Manager {
+func NewManager(config objs.DBConfig) *Manager {
 	mg := new(Manager)
 	var err error
-	mg.db, err = store.StoreFactory("pika", dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout)
-	//mg.db, err = store.StoreFactory("rocksdb", dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout)
+	mg.db, err = store.StoreFactory(config)
 	if err != nil {
 		panic(err)
 	}
@@ -70,9 +69,9 @@ func (mg *Manager) AddDoc(doc objs.Doc, docid uint64, ps objs.Postings) {
 	mg.positiveBuffer.Set(docKey, tools.Bytes2Str(docByte))
 }
 
-func (mg *Manager) Retrieve(ctx context.Context, fieldName string, term string) (objs.RecallPostingList, error) {
+func (mg *Manager) Retrieve(fieldName string, term string, trackid uint64) (objs.RecallPostingList, error) {
 	defer func(cost func() time.Duration) {
-		log.Warnf("trackid:%v, cost: %.3f ms", ctx.Value("trackid"), float64(cost().Microseconds())/1000.0)
+		log.Warnf("trackid:%v, cost: %.3f ms", trackid, float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
 
 	pl := make(objs.PostingList, 0)
@@ -99,12 +98,13 @@ func (mg *Manager) Retrieve(ctx context.Context, fieldName string, term string) 
 
 		postingRec := objs.RecallPosting{}
 		postingRec.Posting = posting
+		fmt.Println(docString, postingRec.Doc)
 		if err := json.Unmarshal(tools.Str2Bytes(docString), &postingRec.Doc); err != nil {
 			return nil, err
 		}
 		recallPl = append(recallPl, postingRec)
 	}
 
-	log.Debugf("trackid:%v, repl:%v", ctx.Value("trackid"), recallPl)
+	log.Debugf("trackid:%v, repl:%v", trackid, recallPl)
 	return recallPl, nil
 }

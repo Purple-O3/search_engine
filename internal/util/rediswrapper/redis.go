@@ -5,6 +5,7 @@ import (
 	"runtime"
 	"search_engine/internal/util/log"
 	"search_engine/internal/util/tools"
+	"strconv"
 	"time"
 
 	"github.com/gomodule/redigo/redis"
@@ -14,35 +15,37 @@ type redisWrapper struct {
 	connPool *redis.Pool
 }
 
-func NewRedis(host string, port string, password string, index int, timeout int) (*redisWrapper, error) {
+func NewRedis(host string, port int, password string, index int, timeout time.Duration) (*redisWrapper, error) {
 	rd := new(redisWrapper)
-	pool := newPool(host, port, password, index, timeout)
+	pool, err := newPool(host, port, password, index, timeout)
 	rd.connPool = pool
-	return rd, nil
+	return rd, err
 }
 
-func newPool(host string, port string, password string, index int, timeout int) *redis.Pool {
-	return &redis.Pool{
+func newPool(host string, port int, password string, index int, timeout time.Duration) (*redis.Pool, error) {
+	pool := &redis.Pool{
 		MaxActive:   3 * runtime.NumCPU(),
 		MaxIdle:     2 * runtime.NumCPU(),
 		IdleTimeout: 1 * time.Millisecond,
 		Dial: func() (redis.Conn, error) {
-			if conn, err := redis.Dial("tcp", host+":"+port,
+			if conn, err := redis.Dial("tcp", host+":"+strconv.Itoa(port),
 				redis.DialPassword(password), redis.DialDatabase(index),
-				redis.DialReadTimeout(time.Duration(timeout)*time.Millisecond),
-				redis.DialWriteTimeout(time.Duration(timeout)*time.Millisecond),
-				redis.DialConnectTimeout(time.Duration(timeout)*time.Millisecond)); err != nil {
+				redis.DialReadTimeout(timeout*time.Millisecond),
+				redis.DialWriteTimeout(timeout*time.Millisecond),
+				redis.DialConnectTimeout(timeout*time.Millisecond)); err != nil {
 				return nil, err
 			} else {
 				return conn, nil
 			}
 		},
 	}
+	_, err := pool.Dial()
+	return pool, err
 }
 
 func (rd *redisWrapper) Set(k []byte, v []byte) error {
 	defer func(cost func() time.Duration) {
-		log.Warnf("trackid:%v, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
+		log.Warnf("cost: %.3f ms", float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
 
 	log.Debugf("key:%s", tools.Bytes2Str(k))
@@ -54,7 +57,7 @@ func (rd *redisWrapper) Set(k []byte, v []byte) error {
 
 func (rd *redisWrapper) Get(k []byte) ([]byte, error) {
 	defer func(cost func() time.Duration) {
-		log.Warnf("trackid:%v, cost: %.3f ms", 0, float64(cost().Microseconds())/1000.0)
+		log.Warnf("cost: %.3f ms", float64(cost().Microseconds())/1000.0)
 	}(tools.TimeCost())
 
 	log.Debugf("key:%s", tools.Bytes2Str(k))

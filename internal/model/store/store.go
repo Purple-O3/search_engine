@@ -2,6 +2,7 @@ package store
 
 import (
 	"errors"
+	"search_engine/internal/objs"
 	"search_engine/internal/util/log"
 	"search_engine/internal/util/rediswrapper"
 )
@@ -13,14 +14,12 @@ type Store interface {
 	Close() error
 }
 
-func StoreFactory(storeType string, path string, host string, port string, password string, index int, timeout int) (Store, error) {
-	switch storeType {
+func StoreFactory(config objs.DBConfig) (Store, error) {
+	switch config.Type {
+	case "pika":
+		return rediswrapper.NewRedis(config.Host, config.Port, config.Password, config.Index, config.Timeout)
 	//case "rocksdb":
 	//	return rocksdbwrapper.NewRocksdb(path)
-	case "pika":
-		return rediswrapper.NewRedis(host, port, password, index, timeout)
-		//case "fileSystem":
-		//		return NewFileSystem(dbPath)
 	default:
 		log.Errorf("store_type argv error")
 		return nil, errors.New("store_type argv error")

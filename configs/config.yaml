@@ -1,0 +1,34 @@
+Server:
+  Name: "search_engine"
+  IP: "127.0.0.1"
+  Port: 7788
+  Debug: false          # debug mode 开启gin debug模式和pprof
+  ReadTimeout:  1000    # http read timeout, 单位: 毫秒
+  WriteTimeout: 1000    # http write timeout, 单位: 毫秒
+  IdleTimeout:  1000    # http idle timeout, 单位: 毫秒
+  Tls:                  # tls
+    Enable: false       # tls 开关，通过该参数控制是否启用tls
+    CertFile: "../configs/ssl.crt"
+    KeyFile: "../configs/ssl.key"
+Log:
+  Type: "file"       #可能的值：file, stdout
+  Level: "debug"      #可能的值：debug, info, warn, error
+  FilePath: "../logs/engine.log"
+  MaxSize: 128       #在进行切割之前，日志文件的最大大小（以MB为单位）
+  MaxBackups: 100    #保留旧文件的最大个数
+  MaxAge: 60         #保留旧文件的最大天数
+  Compress: true     #是否压缩/归档旧文件
+Analyzer:
+  StopWordPath: "../data/stop_word.txt"
+Bloomfilter:
+  MiscalRate: 0.00001
+  AddSize: 100000000
+  StorePath: "../data/bloomfilter"
+DB:
+  Type: "pika"
+  Path: "../data/db/engine.db"
+  Host: "114.116.201.18"
+  Port: 9221
+  Password: ""
+  Index: 0
+  Timeout: 1000       #单位: 毫秒

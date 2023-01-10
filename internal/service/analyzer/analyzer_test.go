@@ -1,7 +1,7 @@
 package analyzer
 
 import (
-	"search_engine/internal/service/objs"
+	"search_engine/internal/objs"
 	"testing"
 	"time"
 )
@@ -33,8 +33,8 @@ import (
 
 func TestAnalysis(t *testing.T) {
 	t.Log("test2")
-	stopWordPath := "../../../data/stop_word.txt"
-	analyzer := AnalyzerFactory(stopWordPath)
+	config := objs.AnalyzerConfig{StopWordPath: "../../../data/stop_word.txt"}
+	analyzer := AnalyzerFactory(config)
 	var docid uint64 = 0
 	doc := objs.Doc{Ident: "88.199.1/aaa.def", Data: objs.Data{Modified: "北京市丰台区", Saled: "北京市海淀区", CreatedAt: time.Now()}}
 	ps := analyzer.Analysis(docid, doc)

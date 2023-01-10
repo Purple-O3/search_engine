@@ -1,20 +1,14 @@
 package datamanager
 
 import (
-	"context"
 	"math/rand"
-	"search_engine/internal/service/objs"
+	"search_engine/internal/objs"
 	"testing"
 )
 
 func TestAll(t *testing.T) {
-	dbPath := "../../../data/db/engine.db"
-	dbHost := "${DBHOST||localhost}"
-	dbPort := "9221"
-	dbAuth := ""
-	dbIndex := 0
-	dbTimeout := 30
-	mg := NewManager(dbPath, dbHost, dbPort, dbAuth, dbIndex, dbTimeout)
+	config := objs.DBConfig{Type: "pika", Path: "../../../data/db/engine.db", Host: "${DBHOST||localhost}", Port: 9221, Password: "", Index: 0, Timeout: 30}
+	mg := NewManager(config)
 
 	var docid uint64 = 0
 	ps := make(objs.Postings, 0)
@@ -53,10 +47,9 @@ func TestAll(t *testing.T) {
 	mg.AddDoc(doc, docid, ps)
 
 	trackid := uint64(rand.Intn(999) + 1)
-	ctx := context.WithValue(context.Background(), "trackid", trackid)
-	ret, _ := mg.Retrieve(ctx, "Modified", "河东区")
+	ret, _ := mg.Retrieve("Modified", "河东区", trackid)
 	t.Log(ret)
-	ret, _ = mg.Retrieve(ctx, "Saled", "河东区")
+	ret, _ = mg.Retrieve("Saled", "河东区", trackid)
 	t.Log(ret)
 
 	docid += 1
@@ -68,6 +61,6 @@ func TestAll(t *testing.T) {
 	doc = objs.Doc{Ident: "88.199.1/eee.def", Data: objs.Data{Modified: "江西省南昌市", Saled: "江西省井冈山市"}}
 	mg.AddDoc(doc, docid, ps)
 
-	ret, _ = mg.Retrieve(ctx, "Modified", "南昌市")
+	ret, _ = mg.Retrieve("Modified", "南昌市", trackid)
 	t.Log(ret)
 }

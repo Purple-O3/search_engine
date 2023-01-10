@@ -6,13 +6,11 @@ import (
 )
 
 func Test(t *testing.T) {
-	bloomfilterMiscalRate := 0.00001
-	var bloomfilterAddSize uint64 = 100
-	bloomfilterStorePath := "../../../data/bloomfilter"
+	config := Config{MiscalRate: 0.00001, AddSize: 100, StorePath: "../../../data/bloomfilter"}
 
 	nub := math.Log(2) * math.Log(2)
 	t.Log(nub)
-	bf := NewBloomFilter(bloomfilterMiscalRate, bloomfilterAddSize, bloomfilterStorePath)
+	bf := NewBloomFilter(config)
 	var docid uint64
 	docid = 123
 	bf.AddNub(docid)
@@ -27,7 +25,7 @@ func Test(t *testing.T) {
 	t.Log(ret)
 	bf.Save2File()
 
-	bf = NewBloomFilter(bloomfilterMiscalRate, bloomfilterAddSize, bloomfilterStorePath)
+	bf = NewBloomFilter(config)
 	mbSize := bf.Size() / 8 / 1000 / 1000
 	t.Log("MbSize:", mbSize)
 	ret = bf.CheckNub(123)
@@ -36,7 +34,7 @@ func Test(t *testing.T) {
 	t.Log(ret)
 	ret = bf.CheckNub(124)
 	t.Log(ret)
-	DeleteBloomFile(bloomfilterStorePath)
+	DeleteBloomFile(config.StorePath)
 
 	/*	bf = NewBloomFilter(0.00001, 100000000, "../../../data/bloomfilter")
 		mbSize = bf.Size() / 8 / 1000 / 1000

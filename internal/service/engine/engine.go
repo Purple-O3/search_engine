@@ -1,12 +1,11 @@
-package engine
+package enginepack
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	dm "search_engine/internal/model/datamanager"
+	"search_engine/internal/objs"
 	al "search_engine/internal/service/analyzer"
-	"search_engine/internal/service/objs"
 	rk "search_engine/internal/service/rank"
 	bf "search_engine/internal/util/bloomfilter"
 	"search_engine/internal/util/log"
@@ -22,14 +21,14 @@ type engine struct {
 	datamanager *dm.Manager
 }
 
-func newEngine(analyzerStopWordPath string, dbPath string, dbHost string, dbPort string, dbPassword string, dbIndex int, dbTimeout int, bloomfilterMiscalRate float64, bloomfilterAddSize uint64, bloomfilterStorePath string) *engine {
-	egn := new(engine)
-	egn.docid = 0
-	egn.analyzer = al.AnalyzerFactory(analyzerStopWordPath)
-	egn.ranker = rk.RankerFactory()
-	egn.bloomfilter = bf.NewBloomFilter(bloomfilterMiscalRate, bloomfilterAddSize, bloomfilterStorePath)
-	egn.datamanager = dm.NewManager(dbPath, dbHost, dbPort, dbPassword, dbIndex, dbTimeout)
-	return egn
+func newEngine(analyzerConfig objs.AnalyzerConfig, dbConfig objs.DBConfig, bloomfilterConfig objs.BloomfilterConfig) *engine {
+	eg := new(engine)
+	eg.docid = 0
+	eg.analyzer = al.AnalyzerFactory(analyzerConfig)
+	eg.ranker = rk.RankerFactory()
+	eg.bloomfilter = bf.NewBloomFilter(bloomfilterConfig)
+	eg.datamanager = dm.NewManager(dbConfig)
+	return eg
 }
 
 func (eg *engine) close() {
@@ -37,7 +36,7 @@ func (eg *engine) close() {
 	eg.bloomfilter.Save2File()
 }
 
-func (eg *engine) retrieveDoc(ctx context.Context, retreiveTerms []objs.RetreiveTerm) objs.RecallPostingList {
+func (eg *engine) retrieveDoc(retreiveTerms []objs.RetreiveTerm, trackid uint64) objs.RecallPostingList {
 	replUnion := make(objs.RecallPostingList, 0)
 	replInters := make([]objs.RecallPostingList, 0)
 	termIntervals := make([]objs.RetreiveTerm, 0)
@@ -48,7 +47,7 @@ func (eg *engine) retrieveDoc(ctx context.Context, retreiveTerms []objs.Retreive
 			termIntervals = append(termIntervals, terminfo)
 		} else {
 			term := fmt.Sprintf("%v", terminfo.Term)
-			if repl, err := eg.datamanager.Retrieve(ctx, terminfo.FieldName, term); err == nil {
+			if repl, err := eg.datamanager.Retrieve(terminfo.FieldName, term, trackid); err == nil {
 				if terminfo.Operator == objs.Union {
 					replUnion = append(replUnion, repl...)
 				} else if terminfo.Operator == objs.Inter {
@@ -73,7 +72,7 @@ func (eg *engine) retrieveDoc(ctx context.Context, retreiveTerms []objs.Retreive
 	}
 
 	if !hasInter {
-		log.Debugf("trackid:%v, replUniqUnion:%v", ctx.Value("trackid"), replUniqUnion)
+		log.Debugf("trackid:%v, replUniqUnion:%v", trackid, replUniqUnion)
 		return eg.ranker.Rank(replUniqUnion)
 	}
 
@@ -95,12 +94,12 @@ func (eg *engine) retrieveDoc(ctx context.Context, retreiveTerms []objs.Retreive
 	}
 
 	replCal := eg.calInter(replUniqUnion, replUniqInters)
-	log.Debugf("trackid:%v, replUniqUnion:%v, replUniqInters:%v replCal:%v", ctx.Value("trackid"), replUniqUnion, replUniqInters, replCal)
+	log.Debugf("trackid:%v, replUniqUnion:%v, replUniqInters:%v replCal:%v", trackid, replUniqUnion, replUniqInters, replCal)
 	return eg.ranker.Rank(replCal)
 }
 
-//TODO：抽离成公共组件
-//指针求交
+// TODO：抽离成公共组件
+// 指针求交
 func (eg *engine) calInter(replUniqUnion objs.RecallPostingList, replUniqInters []objs.RecallPostingList) objs.RecallPostingList {
 	if len(replUniqUnion) != 0 {
 		replUniqInters = append(replUniqInters, replUniqUnion)
@@ -193,10 +192,10 @@ func (eg *engine) filter(repo objs.RecallPosting, termIntervals []objs.RetreiveT
 	return false
 }
 
-func (eg *engine) addDoc(ctx context.Context, doc objs.Doc, docid uint64) {
+func (eg *engine) addDoc(doc objs.Doc, docid uint64, trackid uint64) {
 	ps := eg.analyzer.Analysis(docid, doc)
 	eg.datamanager.AddDoc(doc, docid, ps)
-	log.Debugf("trackid:%v, docid:%d, ps:%v", ctx.Value("trackid"), docid, ps)
+	log.Debugf("trackid:%v, docid:%d, ps:%v", trackid, docid, ps)
 }
 
 func (eg *engine) delDoc(docid uint64) {
