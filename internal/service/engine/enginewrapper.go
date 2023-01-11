@@ -12,19 +12,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type EngineWrapper struct {
+type engineWrapper struct {
 	*engine
 	ginwrapper.Base
 }
 
-var egw *EngineWrapper
+var egw *engineWrapper
 
-func NewWrapEngine(analyzerConfig objs.AnalyzerConfig, dbConfig objs.DBConfig, bloomfilterConfig objs.BloomfilterConfig) {
-	egw = new(EngineWrapper)
+func NewEngineWrap(analyzerConfig objs.AnalyzerConfig, dbConfig objs.DBConfig, bloomfilterConfig objs.BloomfilterConfig) {
+	egw = new(engineWrapper)
 	egw.engine = newEngine(analyzerConfig, dbConfig, bloomfilterConfig)
 }
 
-func CloseWrapEngine() {
+func CloseEngineWrap() {
 	egw.engine.close()
 }
 

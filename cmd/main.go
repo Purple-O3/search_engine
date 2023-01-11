@@ -37,14 +37,14 @@ func start() {
 	if config.Log.Type == "file" {
 		log.InitLogger(config.Log)
 	}
-	enginepack.NewWrapEngine(config.Analyzer, config.DB, config.Bloomfilter)
+	enginepack.NewEngineWrap(config.Analyzer, config.DB, config.Bloomfilter)
 	if err = controller.StartNet(config.Server, closeFunc); err != nil {
 		panic(err)
 	}
 }
 
 func closeFunc() {
-	enginepack.CloseWrapEngine()
+	enginepack.CloseEngineWrap()
 	log.CloseLogger()
 }
 

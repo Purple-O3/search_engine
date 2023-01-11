@@ -46,10 +46,11 @@ func (base *Base) BindAndValidate(c *gin.Context, reqStruct interface{}) error {
 		return OnlySupportGetAndPostErr
 	}
 
-	// 尝试绑定下uri参数
+	// 绑定uri参数
 	if err := c.ShouldBindUri(reqStruct); err != nil {
 		return err
 	}
+	// 绑定header参数
 	if err := c.ShouldBindHeader(reqStruct); err != nil {
 		return err
 	}

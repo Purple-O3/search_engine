@@ -33,7 +33,7 @@ func TestAll(t *testing.T) {
 		objs.DBConfig{Type: "pika", Path: "../../../data/db/engine.db", Host: "${DBHOST||localhost}", Port: 9221, Password: "", Index: 0, Timeout: 30},
 	}
 
-	enginepack.NewWrapEngine(config.Analyzer, config.DB, config.Bloomfilter)
+	enginepack.NewEngineWrap(config.Analyzer, config.DB, config.Bloomfilter)
 	if err := StartNet(config.Server, closeFunc); err != nil {
 		panic(err)
 	}
@@ -41,7 +41,7 @@ func TestAll(t *testing.T) {
 }
 
 func closeFunc() {
-	enginepack.CloseWrapEngine()
+	enginepack.CloseEngineWrap()
 	log.CloseLogger()
 }
 

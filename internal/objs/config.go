@@ -2,12 +2,14 @@ package objs
 
 import (
 	"search_engine/internal/util/bloomfilter"
+	"search_engine/internal/util/ginwrapper"
 	"search_engine/internal/util/log"
 	"time"
 )
 
 type LogConfig = log.Config
 type BloomfilterConfig = bloomfilter.Config
+type ServerConfig = ginwrapper.Config
 
 type Config struct {
 	Server      ServerConfig
@@ -15,23 +17,6 @@ type Config struct {
 	Analyzer    AnalyzerConfig
 	Bloomfilter BloomfilterConfig
 	DB          DBConfig
-}
-
-type ServerConfig struct {
-	Name         string
-	IP           string
-	Port         int
-	ReadTimeout  time.Duration
-	WriteTimeout time.Duration
-	IdleTimeout  time.Duration
-	Debug        bool
-	Tls          TLS
-}
-
-type TLS struct {
-	Enable   bool
-	CertFile string
-	KeyFile  string
 }
 
 type AnalyzerConfig struct {
