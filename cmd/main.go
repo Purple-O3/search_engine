@@ -14,7 +14,7 @@ import (
 )
 
 func start() {
-	configPath := "../configs/config.yaml"
+	configPath := "../configs/engine.yaml"
 	fileName := filepath.Base(configPath)
 	fileNames := strings.Split(fileName, ".")
 	if len(fileNames) != 2 {
