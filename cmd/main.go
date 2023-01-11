@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"search_engine/internal/controller"
 	"search_engine/internal/objs"
-	enginepack "search_engine/internal/service/engine"
+	"search_engine/internal/service/engine"
 	"search_engine/internal/util/log"
 	"strings"
 
@@ -37,14 +37,14 @@ func start() {
 	if config.Log.Type == "file" {
 		log.InitLogger(config.Log)
 	}
-	enginepack.NewEngineWrap(config.Analyzer, config.DB, config.Bloomfilter)
+	engine.NewEngineWrap(config.Analyzer, config.DB, config.Bloomfilter)
 	if err = controller.StartNet(config.Server, closeFunc); err != nil {
 		panic(err)
 	}
 }
 
 func closeFunc() {
-	enginepack.CloseEngineWrap()
+	engine.CloseEngineWrap()
 	log.CloseLogger()
 }
 

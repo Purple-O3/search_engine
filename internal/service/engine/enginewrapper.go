@@ -1,4 +1,4 @@
-package enginepack
+package engine
 
 import (
 	"errors"
