@@ -2,7 +2,6 @@ package datamanager
 
 import (
 	"encoding/json"
-	"fmt"
 	"search_engine/internal/model/index"
 	"search_engine/internal/model/store"
 	"search_engine/internal/objs"
@@ -98,7 +97,6 @@ func (mg *Manager) Retrieve(fieldName string, term string, trackid uint64) (objs
 
 		postingRec := objs.RecallPosting{}
 		postingRec.Posting = posting
-		fmt.Println(docString, postingRec.Doc)
 		if err := json.Unmarshal(tools.Str2Bytes(docString), &postingRec.Doc); err != nil {
 			return nil, err
 		}
