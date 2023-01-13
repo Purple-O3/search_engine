@@ -5,7 +5,7 @@ import (
 	"search_engine/internal/objs"
 	"search_engine/internal/service/engine"
 	"search_engine/internal/util/log"
-	"search_engine/internal/util/viperwrapper"
+	"search_engine/internal/util/tools"
 
 	_ "go.uber.org/automaxprocs"
 )
@@ -13,7 +13,7 @@ import (
 func start() {
 	configPath := "../configs/engine.yaml"
 	var config objs.Config
-	err := viperwrapper.DecodeConfig(configPath, &config)
+	err := tools.DecodeConfig(configPath, &config)
 	if err != nil {
 		panic(err)
 	}
