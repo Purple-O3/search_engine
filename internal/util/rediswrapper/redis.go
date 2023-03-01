@@ -17,12 +17,13 @@ type redisWrapper struct {
 
 func NewRedis(host string, port int, password string, index int, timeout time.Duration) (*redisWrapper, error) {
 	rd := new(redisWrapper)
-	pool, err := newPool(host, port, password, index, timeout)
+	pool := newPool(host, port, password, index, timeout)
 	rd.connPool = pool
+	_, err := rd.connPool.Dial()
 	return rd, err
 }
 
-func newPool(host string, port int, password string, index int, timeout time.Duration) (*redis.Pool, error) {
+func newPool(host string, port int, password string, index int, timeout time.Duration) *redis.Pool {
 	pool := &redis.Pool{
 		MaxActive:   3 * runtime.NumCPU(),
 		MaxIdle:     2 * runtime.NumCPU(),
@@ -39,8 +40,7 @@ func newPool(host string, port int, password string, index int, timeout time.Dur
 			}
 		},
 	}
-	_, err := pool.Dial()
-	return pool, err
+	return pool
 }
 
 func (rd *redisWrapper) Set(k []byte, v []byte) error {
